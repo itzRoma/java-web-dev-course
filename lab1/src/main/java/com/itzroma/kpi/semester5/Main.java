@@ -5,14 +5,14 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         try {
-            LabUtils.generateFiles();
+            Utils.generateFiles();
         } catch (IOException ex) {
-            System.out.println("Cannot generate files: " + ex.getMessage());
+            System.out.printf("Cannot generate files: %s%n", ex.getMessage());
         }
 
         System.out.printf("%nLab1 started%n%n");
 
-        new LabRunner().run();
+        new Runner().run();
 
         System.out.printf("%nLab1 finished%n");
     }

@@ -1,12 +1,14 @@
 package com.itzroma.kpi.semester5;
 
-public final class LabResult {
-    private final String filePath;
+public class TaskResult {
     private Integer deletedWords;
 
-    public LabResult(String filePath) {
-        this.filePath = filePath;
+    public TaskResult() {
         deletedWords = 0;
+    }
+
+    public TaskResult(Integer deletedWords) {
+        this.deletedWords = deletedWords;
     }
 
     public void addDeletedWords(int count) {
@@ -15,10 +17,5 @@ public final class LabResult {
 
     public Integer getDeletedWords() {
         return deletedWords;
-    }
-
-    @Override
-    public String toString() {
-        return filePath + " : deleted " + deletedWords + " words";
     }
 }

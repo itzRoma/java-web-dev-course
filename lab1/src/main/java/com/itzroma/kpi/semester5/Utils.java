@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class LabUtils {
+public class Utils {
     public static void generateFiles() throws IOException {
         File file1 = new File("lab1/src/main/resources/file1.txt");
         forceCreate(file1);
@@ -33,7 +33,7 @@ public class LabUtils {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eu consectetur tortor. Duis et nulla quis diam condimentum semper. Pellentesque nunc ipsum, tempus vel diam nec, gravida scelerisque tortor. Sed ullamcorper rutrum tortor sed maximus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Morbi ipsum sapien, fermentum sed nulla et, fringilla consectetur metus. Donec convallis mattis tincidunt. Sed hendrerit magna eget euismod viverra. Aenean pretium leo lorem, sed faucibus ipsum sodales et. Integer id dignissim dolor, eget tincidunt lacus. Aliquam laoreet lobortis dignissim. Curabitur purus diam, feugiat vitae gravida quis, facilisis ut risus. Curabitur luctus imperdiet sem, eget molestie purus tincidunt ut.
                 """);
 
-        System.out.println("All files were rewritten: P:\\kpi\\semester-5\\jwdc\\java-web-dev-course\\lab1\\src\\main\\resources");
+        System.out.println("All files were rewritten in P:\\kpi\\semester-5\\jwdc\\java-web-dev-course\\lab1\\src\\main\\resources");
     }
 
     private static void forceCreate(File file) throws IOException {
