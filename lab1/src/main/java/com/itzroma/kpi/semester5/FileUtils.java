@@ -1,12 +1,10 @@
 package com.itzroma.kpi.semester5;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
+import java.util.Arrays;
 
-public class Utils {
+public class FileUtils {
     public static void generateFiles() throws IOException {
         File file1 = new File("lab1/src/main/resources/file1.txt");
         forceCreate(file1);
@@ -33,7 +31,7 @@ public class Utils {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eu consectetur tortor. Duis et nulla quis diam condimentum semper. Pellentesque nunc ipsum, tempus vel diam nec, gravida scelerisque tortor. Sed ullamcorper rutrum tortor sed maximus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Morbi ipsum sapien, fermentum sed nulla et, fringilla consectetur metus. Donec convallis mattis tincidunt. Sed hendrerit magna eget euismod viverra. Aenean pretium leo lorem, sed faucibus ipsum sodales et. Integer id dignissim dolor, eget tincidunt lacus. Aliquam laoreet lobortis dignissim. Curabitur purus diam, feugiat vitae gravida quis, facilisis ut risus. Curabitur luctus imperdiet sem, eget molestie purus tincidunt ut.
                 """);
 
-        System.out.println("All files were rewritten in P:\\kpi\\semester-5\\jwdc\\java-web-dev-course\\lab1\\src\\main\\resources");
+        System.out.printf("%nAll files were rewritten in P:\\kpi\\semester-5\\jwdc\\java-web-dev-course\\lab1\\src\\main\\resources%n");
     }
 
     private static void forceCreate(File file) throws IOException {
@@ -49,5 +47,30 @@ public class Utils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static int findAndDelete(File file, String toDelete) {
+        int deletedWords = 0;
+        try (
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))
+        ) {
+            StringBuilder result = new StringBuilder();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                deletedWords += Arrays.stream(line.split("\\W+"))
+                        .filter(word -> word.length() >= 3 && word.length() <= 5)
+                        .count();
+
+                line = line.replaceAll(toDelete, "");
+                result.append(line);
+            }
+
+            writer.write(result.toString());
+        } catch (IOException ex) {
+            throw new RuntimeException("Error while deleting words from %s : %s".formatted(file.getAbsolutePath(), ex.getMessage()));
+        }
+        return deletedWords;
     }
 }

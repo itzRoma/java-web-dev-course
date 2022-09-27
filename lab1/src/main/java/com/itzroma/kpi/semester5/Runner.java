@@ -19,10 +19,7 @@ public class Runner {
         } while (!correctInputDir(file));
 
         ExecutorService pool = Executors.newCachedThreadPool();
-
-        System.out.printf("Starting thread for provided directory %s%n", file.getAbsolutePath());
         Task task = new Task(file, pool);
-
         Future<TaskResult> result = pool.submit(task);
 
         try {

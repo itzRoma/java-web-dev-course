@@ -1,8 +1,7 @@
 package com.itzroma.kpi.semester5;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -18,35 +17,13 @@ public class Task implements Callable<TaskResult> {
         this.pool = pool;
     }
 
-    private int findAndDelete(File file) {
-        int deletedWords = 0;
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(file));
-                BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))
-        ) {
-            StringBuilder result = new StringBuilder();
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                deletedWords += Arrays.stream(line.split("\\W+")).filter(word -> word.length() >= 3 && word.length() <= 5).count();
-                line = line.replaceAll("\\b[a-zа-яA-ZА-Я]{3,5}\\b", "");
-                result.append(line);
-            }
-
-            writer.write(result.toString());
-        } catch (IOException ex) {
-            throw new RuntimeException("Error while deleting words from %s : %s".formatted(file.getAbsolutePath(), ex.getMessage()));
-        }
-        return deletedWords;
-    }
-
     @Override
     public TaskResult call() {
 
         // If provided file is a valid txt file
         if (!file.isDirectory()) {
-            int deletedWordsCount = findAndDelete(file);
-            System.out.printf("%s : deleted %d words%n", file.getAbsolutePath(), deletedWordsCount);
+            int deletedWordsCount = FileUtils.findAndDelete(file, "\\b[a-zа-яA-ZА-Я]{3,5}\\b");
+            System.out.printf("File %s : deleted %d words%n", file.getAbsolutePath(), deletedWordsCount);
             return new TaskResult(deletedWordsCount);
         }
 
@@ -54,19 +31,14 @@ public class Task implements Callable<TaskResult> {
         List<Future<TaskResult>> dirResults = new ArrayList<>();
 
         for (File file : file.listFiles()) {
-            if (file.isDirectory()) {
-                System.out.printf("Starting new thread for %s directory%n", file.getAbsolutePath());
-                Future<TaskResult> result = pool.submit(new Task(file, pool));
-                dirResults.add(result);
-            } else if (!file.isDirectory() && isTxtFile(file)) {
-                System.out.printf("Starting new thread for %s file%n", file.getAbsolutePath());
+            if (file.isDirectory() || (!file.isDirectory() && isTxtFile(file))) {
                 Future<TaskResult> result = pool.submit(new Task(file, pool));
                 dirResults.add(result);
             }
         }
 
         TaskResult result = collectResults(dirResults);
-        System.out.printf("Total result for %s : deleted %d words%n", file.getAbsolutePath(), result.getDeletedWords());
+        System.out.printf("Directory %s : deleted %d words in total%n", file.getAbsolutePath(), result.getDeletedWords());
         return result;
     }
 
