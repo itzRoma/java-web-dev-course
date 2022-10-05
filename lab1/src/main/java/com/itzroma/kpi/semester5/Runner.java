@@ -18,6 +18,8 @@ public class Runner {
             System.out.println();
         } while (!correctInputDir(file));
 
+        long start = System.currentTimeMillis();
+
         ExecutorService pool = Executors.newCachedThreadPool();
         Task task = new Task(file, pool);
         Future<TaskResult> result = pool.submit(task);
@@ -27,6 +29,8 @@ public class Runner {
         } catch (ExecutionException | InterruptedException ex) {
             ex.printStackTrace();
         }
+
+        System.out.printf("Total time: %d ms%n", System.currentTimeMillis() - start);
 
         pool.shutdown();
     }
