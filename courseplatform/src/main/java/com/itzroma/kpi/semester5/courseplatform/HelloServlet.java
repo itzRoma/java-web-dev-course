@@ -1,17 +1,22 @@
 package com.itzroma.kpi.semester5.courseplatform;
 
-import java.io.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet(name = "helloServlet", value = "/hello-servlet")
 public class HelloServlet extends HttpServlet {
     private String message;
 
+    @Override
     public void init() {
         message = "Hello World!";
     }
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
 
@@ -22,6 +27,7 @@ public class HelloServlet extends HttpServlet {
         out.println("</body></html>");
     }
 
+    @Override
     public void destroy() {
     }
 }
