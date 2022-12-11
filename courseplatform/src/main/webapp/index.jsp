@@ -1,13 +1,13 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>JSP - Hello World</title>
+    <title>CoursePlatform | Home</title>
 </head>
 <body>
-<h1><%= "Hello World!" %>
-</h1>
-<br/>
-<a href="test-db-connection">Test db connection</a>
+<h1><%= "Welcome to the CoursePlatform" %></h1><br/>
+<p><a href="${pageContext.request.contextPath}/test-db-connection">Test db connection</a></p>
+<p><a href="${pageContext.request.contextPath}/auth/sign-up">Sign-up</a></p>
+<p><a href="${pageContext.request.contextPath}/sign-in">Sign-in</a></p>
 </body>
 </html>
