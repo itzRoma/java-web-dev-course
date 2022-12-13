@@ -11,10 +11,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
 
+    public StudentDaoImpl() {
+        super(Student.class);
+    }
+
     private static final String CREATE_STUDENT_QUERY = "INSERT INTO student (blocked, user_id) VALUES (?, ?)";
+
+    private static final String FIND_STUDENT_BY_USER_ID_QUERY = "SELECT * FROM student WHERE user_id = ?";
 
     @Override
     public Student create(Student entity) throws UnsuccessfulOperationException {
@@ -42,8 +49,8 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
     }
 
     @Override
-    public Student findById(Long id) throws UnsuccessfulOperationException {
-        return null;
+    public Optional<Student> findById(Long id) throws UnsuccessfulOperationException {
+        return Optional.empty();
     }
 
     @Override
@@ -54,5 +61,30 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
     @Override
     public Student update(Student target, Student source) throws UnsuccessfulOperationException {
         return null;
+    }
+
+    @Override
+    public Optional<Student> findByEmail(String email) throws UnsuccessfulOperationException {
+        Optional<Student> student = super.findByEmail(email);
+        if (student.isEmpty()) return Optional.empty();
+
+        ResultSet rs = null;
+        try (PreparedStatement ps = connection.prepareStatement(FIND_STUDENT_BY_USER_ID_QUERY)) {
+            int i = 0;
+            ps.setLong(++i, student.get().getUserId());
+
+            i = 0;
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                student.get().setStudentId(rs.getLong(++i));
+                student.get().setBlocked(rs.getBoolean(++i));
+                student.get().setUserId(rs.getLong(++i));
+            }
+            return student;
+        } catch (SQLException ex) {
+            throw new UnsuccessfulOperationException(ex);
+        } finally {
+            DBUtils.close(rs);
+        }
     }
 }

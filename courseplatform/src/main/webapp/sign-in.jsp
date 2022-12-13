@@ -5,14 +5,22 @@
     <title>CoursePlatform | Sign-in</title>
 </head>
 <body>
-<form action="${pageContext.request.contextPath}/sign-in" method="post">
-    <input id="email" type="text"/>
-    <label for="email">Email</label>
+<h1>${requestScope.errorMessage}</h1>
+<form action="${pageContext.request.contextPath}/auth/sign-in?redirect-to=${requestScope.redirectTo}" method="post">
+    <p>
+        <label for="email">Email</label>
+        <input id="email" name="email" type="text"/>
+        <p>${requestScope.emailMessage}</p>
+    </p>
 
-    <input id="pass" type="password"/>
-    <label for="pass">Password</label>
+    <p>
+        <label for="pass">Password</label>
+        <input id="pass" name="password" type="password"/>
+    </p>
 
-    <button type="submit">Sign in</button>
+    <p>
+        <button type="submit">Sign in</button>
+    </p>
 </form>
 </body>
 </html>

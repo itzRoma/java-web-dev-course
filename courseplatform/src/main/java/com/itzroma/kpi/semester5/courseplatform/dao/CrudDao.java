@@ -4,13 +4,14 @@ import com.itzroma.kpi.semester5.courseplatform.exception.dao.UnsuccessfulOperat
 import com.itzroma.kpi.semester5.courseplatform.model.Entity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CrudDao<ID, T extends Entity<ID>> extends AbstractDao<ID, T> {
     // C - create
     T create(T entity) throws UnsuccessfulOperationException;
 
     // R - read (one)
-    T findById(ID id) throws UnsuccessfulOperationException;
+    Optional<T> findById(ID id) throws UnsuccessfulOperationException;
 
     // R - read (all)
     List<T> findAll() throws UnsuccessfulOperationException;

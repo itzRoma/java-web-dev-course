@@ -1,7 +1,6 @@
 package com.itzroma.kpi.semester5.courseplatform.db;
 
 import com.itzroma.kpi.semester5.courseplatform.dao.AbstractDao;
-import com.itzroma.kpi.semester5.courseplatform.exception.TransactionException;
 import com.itzroma.kpi.semester5.courseplatform.model.Entity;
 
 import java.sql.Connection;
@@ -23,7 +22,7 @@ public class Transaction {
         try {
             connection.setAutoCommit(false);
         } catch (SQLException ex) {
-            throw new TransactionException(ex);
+            log.severe(ex.getMessage());
         }
 
         dao.setConnection(connection);
