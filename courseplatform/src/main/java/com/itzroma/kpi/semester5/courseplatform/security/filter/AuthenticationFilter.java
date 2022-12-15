@@ -1,5 +1,10 @@
 package com.itzroma.kpi.semester5.courseplatform.security.filter;
 
+import com.itzroma.kpi.semester5.courseplatform.view.DispatchType;
+import com.itzroma.kpi.semester5.courseplatform.view.JspPage;
+import com.itzroma.kpi.semester5.courseplatform.view.View;
+import com.itzroma.kpi.semester5.courseplatform.view.ViewDispatcher;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +23,9 @@ public class AuthenticationFilter implements Filter {
         if (isLoggedIn(session)) {
             chain.doFilter(request, response);
         } else {
-            resp.sendRedirect(req.getContextPath() + "/auth/sign-in?redirect-to=" + req.getRequestURI());
+            View view = new View(JspPage.SIGN_IN, DispatchType.REDIRECT);
+            view.addQueryParameter("redirect-to", req.getRequestURI());
+            new ViewDispatcher(view, req, resp).dispatch();
         }
     }
 

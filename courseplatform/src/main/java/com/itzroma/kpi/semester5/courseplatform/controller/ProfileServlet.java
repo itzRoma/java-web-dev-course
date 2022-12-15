@@ -1,5 +1,10 @@
 package com.itzroma.kpi.semester5.courseplatform.controller;
 
+import com.itzroma.kpi.semester5.courseplatform.view.DispatchType;
+import com.itzroma.kpi.semester5.courseplatform.view.JspPage;
+import com.itzroma.kpi.semester5.courseplatform.view.View;
+import com.itzroma.kpi.semester5.courseplatform.view.ViewDispatcher;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +25,6 @@ public class ProfileServlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/profile.jsp").forward(request, response);
+        new ViewDispatcher(new View(JspPage.PROFILE, DispatchType.FORWARD), request, response).dispatch();
     }
 }

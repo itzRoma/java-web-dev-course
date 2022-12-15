@@ -6,6 +6,10 @@ import com.itzroma.kpi.semester5.courseplatform.model.Role;
 import com.itzroma.kpi.semester5.courseplatform.model.Student;
 import com.itzroma.kpi.semester5.courseplatform.service.StudentService;
 import com.itzroma.kpi.semester5.courseplatform.service.impl.StudentServiceImpl;
+import com.itzroma.kpi.semester5.courseplatform.view.DispatchType;
+import com.itzroma.kpi.semester5.courseplatform.view.JspPage;
+import com.itzroma.kpi.semester5.courseplatform.view.View;
+import com.itzroma.kpi.semester5.courseplatform.view.ViewDispatcher;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,18 +23,18 @@ import java.io.IOException;
 public class AuthServlet extends HttpServlet {
 
     private static final String REDIRECT_TO_PARAMETER = "redirect-to";
-    private static final String SIGN_UP_JSP_PATH = "/sign-up.jsp";
-    private static final String SIGN_IN_JSP_PATH = "/sign-in.jsp";
-    private static final String ERROR_JSP_PATH = "/error.jsp";
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         request.setAttribute("redirectTo", request.getParameter(REDIRECT_TO_PARAMETER));
-        switch (extractAction(request)) {
-            case "sign-up" -> request.getRequestDispatcher(SIGN_UP_JSP_PATH).forward(request, response);
-            case "sign-in" -> request.getRequestDispatcher(SIGN_IN_JSP_PATH).forward(request, response);
-            default -> request.getRequestDispatcher(ERROR_JSP_PATH).forward(request, response);
-        }
+
+        View view = switch (extractAction(request)) {
+            case "sign-up" -> new View(JspPage.SIGN_UP, DispatchType.FORWARD);
+            case "sign-in" -> new View(JspPage.SIGN_IN, DispatchType.FORWARD);
+            default -> View.notFound(request.getRequestURI(), DispatchType.FORWARD);
+        };
+        new ViewDispatcher(view, request, response).dispatch();
     }
 
     private static String extractAction(HttpServletRequest request) {
@@ -39,13 +43,15 @@ public class AuthServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String emailParameter = request.getParameter("email");
         String passwordParameter = request.getParameter("password");
+
         String redirectTo = request.getParameter(REDIRECT_TO_PARAMETER);
+        request.setAttribute("redirectTo", redirectTo);
 
         StudentService service = new StudentServiceImpl();
-        request.setAttribute("redirectTo", redirectTo);
         switch (extractAction(request)) {
             case "sign-up" -> {
                 try {
@@ -56,37 +62,46 @@ public class AuthServlet extends HttpServlet {
                             passwordParameter
                     ));
                     signInInSession(request, student.getEmail(), student.getRole());
-                    redirect(redirectTo, request, response, "/profile");
+                    View view = View.fromUrl(redirectTo, JspPage.PROFILE, DispatchType.REDIRECT);
+                    new ViewDispatcher(view, request, response).dispatch();
                     break;
                 } catch (EntityExistsException ex) {
                     request.setAttribute("emailError", ex.getMessage());
                 } catch (ServiceException ex) {
                     request.setAttribute("error", ex.getMessage());
                 }
-                forward(SIGN_UP_JSP_PATH, request, response);
+                View view = new View(JspPage.SIGN_UP, DispatchType.FORWARD);
+                new ViewDispatcher(view, request, response).dispatch();
             }
             case "sign-in" -> {
                 try {
                     if (!service.existsByEmail(emailParameter)) {
                         request.setAttribute("emailError", "Invalid email");
-                        forward(SIGN_IN_JSP_PATH, request, response);
+                        View view = new View(JspPage.SIGN_IN, DispatchType.FORWARD);
+                        new ViewDispatcher(view, request, response).dispatch();
                         break;
                     }
                     if (!service.existsByEmailAndPassword(emailParameter, passwordParameter)) {
                         request.setAttribute("passwordError", "Invalid password");
-                        forward(SIGN_IN_JSP_PATH, request, response);
+                        View view = new View(JspPage.SIGN_IN, DispatchType.FORWARD);
+                        new ViewDispatcher(view, request, response).dispatch();
                         break;
                     }
                     signInInSession(request, emailParameter, service.getRoleByEmail(emailParameter));
-                    redirect(redirectTo, request, response, "/profile");
+                    View view = View.fromUrl(redirectTo, JspPage.PROFILE, DispatchType.REDIRECT);
+                    new ViewDispatcher(view, request, response).dispatch();
                     break;
                 } catch (ServiceException ex) {
                     request.setAttribute("error", ex.getMessage());
                 }
-                forward(SIGN_IN_JSP_PATH, request, response);
+                View view = new View(JspPage.SIGN_IN, DispatchType.FORWARD);
+                new ViewDispatcher(view, request, response).dispatch();
             }
             case "sign-out" -> signOut(request, response);
-            default -> forward(ERROR_JSP_PATH, request, response);
+            default -> {
+                View view = View.internalServerError(request.getRequestURI(), DispatchType.FORWARD);
+                new ViewDispatcher(view, request, response).dispatch();
+            }
         }
     }
 
@@ -96,27 +111,14 @@ public class AuthServlet extends HttpServlet {
         session.setAttribute("role", role);
     }
 
-    private static void forward(String path, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher(path).forward(request, response);
-    }
-
-    private static void redirect(
-            String redirectTo, HttpServletRequest request, HttpServletResponse response, String defaultPath
-    ) throws IOException {
-        if (redirectTo != null && !redirectTo.isBlank()) {
-            response.sendRedirect(redirectTo);
-        } else {
-            response.sendRedirect(request.getContextPath() + defaultPath);
-        }
-    }
-
-    private static void signOut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private static void signOut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         HttpSession session = request.getSession();
         session.removeAttribute("email");
         session.removeAttribute("role");
         session.invalidate();
 
-        String redirectTo = request.getParameter(REDIRECT_TO_PARAMETER);
-        redirect(redirectTo, request, response, "/");
+        View view = View.fromUrl(request.getParameter(REDIRECT_TO_PARAMETER), JspPage.INDEX, DispatchType.REDIRECT);
+        new ViewDispatcher(view, request, response).dispatch();
     }
 }

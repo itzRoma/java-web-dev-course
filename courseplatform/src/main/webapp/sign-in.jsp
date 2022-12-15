@@ -12,22 +12,19 @@
                         <h3>Sign in</h3>
 
                         <div class="my-3 text-start">&leftarrow;
-                            <a href="${requestScope.redirectTo}"
-                               class="text-black-50 fw-bold">Back</a>
+                            <a href="${requestScope.redirectTo}" class="text-black-50 fw-bold">Back</a>
                         </div>
 
-                        <c:if test="${requestScope.error != null}">
-                            <div class="my-3 invalid-feedback text-start">
-                                    ${requestScope.error}
-                            </div>
-                        </c:if>
+                        <div class="my-3 invalid-feedback text-start">
+                                ${requestScope.error}
+                        </div>
 
                         <form class="d-flex flex-column"
                               action="${pageContext.request.contextPath}/auth/sign-in?redirect-to=${requestScope.redirectTo}"
                               method="post">
 
                             <div class="input-group has-validation mb-3">
-                                <div class="form-floating <c:if test="${requestScope.passwordError != null}">is-invalid</c:if>">
+                                <div class="form-floating <c:if test="${requestScope.emailError != null}">is-invalid</c:if>">
                                     <input type="email" name="email"
                                            class="form-control <c:if test="${requestScope.emailError != null}">is-invalid</c:if>"
                                            id="floatingEmail" placeholder="Email" required>

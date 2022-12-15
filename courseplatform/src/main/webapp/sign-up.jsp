@@ -12,15 +12,12 @@
                         <h3>Sign up</h3>
 
                         <div class="my-3 text-start">&leftarrow;
-                            <a href="${requestScope.redirectTo}"
-                               class="text-black-50 fw-bold">Back</a>
+                            <a href="${requestScope.redirectTo}" class="text-black-50 fw-bold">Back</a>
                         </div>
 
-                        <c:if test="${requestScope.error != null}">
-                            <div class="my-3 invalid-feedback text-start">
-                                    ${requestScope.error}
-                            </div>
-                        </c:if>
+                        <div class="my-3 invalid-feedback text-start">
+                                ${requestScope.error}
+                        </div>
 
                         <form class="d-flex flex-column"
                               action="${pageContext.request.contextPath}/auth/sign-up?redirect-to=${requestScope.redirectTo}"
