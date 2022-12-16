@@ -2,5 +2,5 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <t:page title="CoursePlatform | Profile">
-    <h1 class="text-center">Welcome ${sessionScope.email}</h1>
+    <h1 class="text-center">Welcome ${sessionScope.role} ${sessionScope.email}</h1>
 </t:page>

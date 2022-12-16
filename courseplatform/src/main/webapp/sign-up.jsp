@@ -61,6 +61,8 @@
                                 <label for="floatingPassword">Password</label>
                             </div>
 
+                            <input type="hidden" name="is-admin" value="${requestScope.isAdmin}">
+
                             <button class="btn btn-lg btn-primary" type="submit">Sign up</button>
 
                         </form>

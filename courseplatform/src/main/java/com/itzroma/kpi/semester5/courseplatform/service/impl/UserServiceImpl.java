@@ -1,10 +1,12 @@
 package com.itzroma.kpi.semester5.courseplatform.service.impl;
 
 import com.itzroma.kpi.semester5.courseplatform.dao.UserDao;
+import com.itzroma.kpi.semester5.courseplatform.dao.impl.AdminDaoImpl;
 import com.itzroma.kpi.semester5.courseplatform.dao.impl.StudentDaoImpl;
 import com.itzroma.kpi.semester5.courseplatform.db.Transaction;
 import com.itzroma.kpi.semester5.courseplatform.exception.dao.UnsuccessfulOperationException;
 import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceException;
+import com.itzroma.kpi.semester5.courseplatform.model.Admin;
 import com.itzroma.kpi.semester5.courseplatform.model.Role;
 import com.itzroma.kpi.semester5.courseplatform.model.Student;
 import com.itzroma.kpi.semester5.courseplatform.model.User;
@@ -18,8 +20,10 @@ public abstract class UserServiceImpl<T extends User> implements UserService<Lon
     private static final Logger log = Logger.getLogger(UserServiceImpl.class.getName());
 
     protected UserServiceImpl(Class<T> entity) {
-        if (entity.getSimpleName().equals(Student.class.getSimpleName())) {
+        if (entity.isAssignableFrom(Student.class)) {
             dao = (UserDao<T>) new StudentDaoImpl();
+        } else if (entity.isAssignableFrom(Admin.class)) {
+            dao = (UserDao<T>) new AdminDaoImpl();
         }
     }
 
