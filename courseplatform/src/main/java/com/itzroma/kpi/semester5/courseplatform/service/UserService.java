@@ -1,6 +1,7 @@
 package com.itzroma.kpi.semester5.courseplatform.service;
 
 import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityExistsException;
+import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityNotFoundException;
 import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceException;
 import com.itzroma.kpi.semester5.courseplatform.model.Role;
 import com.itzroma.kpi.semester5.courseplatform.model.User;
@@ -12,7 +13,7 @@ public interface UserService<ID, T extends User> {
 
     boolean existsByEmailAndPassword(String email, String password) throws ServiceException;
 
-    T findByEmail(String email) throws ServiceException;
+    T findByEmail(String email) throws EntityNotFoundException, ServiceException;
 
     Role getRoleByEmail(String email) throws ServiceException;
 }

@@ -7,8 +7,6 @@ import com.itzroma.kpi.semester5.courseplatform.model.Role;
 import com.itzroma.kpi.semester5.courseplatform.model.User;
 
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 
 public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> implements UserDao<T> {
@@ -118,9 +116,7 @@ public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> i
                 entity.setEmail(rs.getString(++i));
                 entity.setPassword(rs.getString(++i));
                 entity.setRole(Role.valueOf(rs.getString(++i)));
-                entity.setRegistrationDate(LocalDateTime.ofInstant(
-                        rs.getDate(++i).toInstant(), ZoneId.systemDefault()
-                ));
+                entity.setRegistrationDate(rs.getTimestamp(++i).toLocalDateTime());
             }
             return Optional.of(entity);
         } catch (SQLException ex) {

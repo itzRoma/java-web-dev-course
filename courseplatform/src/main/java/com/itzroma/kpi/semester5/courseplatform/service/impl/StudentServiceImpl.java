@@ -5,7 +5,7 @@ import com.itzroma.kpi.semester5.courseplatform.dao.impl.StudentDaoImpl;
 import com.itzroma.kpi.semester5.courseplatform.db.Transaction;
 import com.itzroma.kpi.semester5.courseplatform.exception.dao.UnsuccessfulOperationException;
 import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityExistsException;
-import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityNotFound;
+import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityNotFoundException;
 import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceException;
 import com.itzroma.kpi.semester5.courseplatform.model.Student;
 import com.itzroma.kpi.semester5.courseplatform.service.StudentService;
@@ -46,7 +46,7 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
     }
 
     @Override
-    public Student findByEmail(String email) throws ServiceException {
+    public Student findByEmail(String email) throws EntityNotFoundException, ServiceException {
         StudentDao dao = new StudentDaoImpl();
         Transaction transaction = new Transaction();
         transaction.openTransaction(dao);
@@ -56,7 +56,7 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
             if (student.isEmpty()) {
                 String message = "Student with provided email does not exist";
                 log.warning(message);
-                throw new EntityNotFound(message);
+                throw new EntityNotFoundException(message);
             }
             return student.get();
         } catch (UnsuccessfulOperationException ex) {

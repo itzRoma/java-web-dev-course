@@ -5,7 +5,7 @@ import com.itzroma.kpi.semester5.courseplatform.dao.impl.AdminDaoImpl;
 import com.itzroma.kpi.semester5.courseplatform.db.Transaction;
 import com.itzroma.kpi.semester5.courseplatform.exception.dao.UnsuccessfulOperationException;
 import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityExistsException;
-import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityNotFound;
+import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityNotFoundException;
 import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceException;
 import com.itzroma.kpi.semester5.courseplatform.model.Admin;
 import com.itzroma.kpi.semester5.courseplatform.service.AdminService;
@@ -46,7 +46,7 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
     }
 
     @Override
-    public Admin findByEmail(String email) throws ServiceException {
+    public Admin findByEmail(String email) throws EntityNotFoundException, ServiceException {
         AdminDao dao = new AdminDaoImpl();
         Transaction transaction = new Transaction();
         transaction.openTransaction(dao);
@@ -56,7 +56,7 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
             if (admin.isEmpty()) {
                 String message = "Admin with provided email does not exist";
                 log.warning(message);
-                throw new EntityNotFound(message);
+                throw new EntityNotFoundException(message);
             }
             return admin.get();
         } catch (UnsuccessfulOperationException ex) {

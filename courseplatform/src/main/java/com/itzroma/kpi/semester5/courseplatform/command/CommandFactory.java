@@ -26,7 +26,7 @@ public abstract class CommandFactory {
 
     protected Command invalidCommand() {
         return request.getMethod().equals("GET")
-                ? new ViewNotFoundCommand(request, response)
-                : new ViewInternalServerErrorCommand(request, response);
+                ? new NotFoundCommand(request, response)
+                : new InternalServerErrorCommand(request, response);
     }
 }

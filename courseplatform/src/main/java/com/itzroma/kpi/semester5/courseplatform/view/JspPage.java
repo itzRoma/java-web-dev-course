@@ -5,19 +5,31 @@ import java.util.Arrays;
 import java.util.List;
 
 public record JspPage(String jspPath, String url) {
+    private static final String CONTEXT_PATH = "/courseplatform";
+    private static final String VIEW_DIR = "/WEB-INF/view";
+
     private static final List<JspPage> DEFAULTS = new ArrayList<>();
 
-    public static final JspPage INDEX = new JspPage("/index.jsp", "/courseplatform");
-    public static final JspPage PROFILE = new JspPage("/profile.jsp", "/courseplatform/profile");
-    public static final JspPage SIGN_IN = new JspPage("/sign-in.jsp", "/courseplatform/auth/sign-in");
-    public static final JspPage SIGN_UP = new JspPage("/sign-up.jsp", "/courseplatform/auth/sign-up");
+    public static final JspPage INDEX = new JspPage(
+            "/index.jsp", CONTEXT_PATH
+    );
+
+    public static final JspPage SIGN_IN = new JspPage(
+            "/sign-in.jsp", CONTEXT_PATH.concat("/auth/sign-in")
+    );
+    public static final JspPage SIGN_UP = new JspPage(
+            "/sign-up.jsp", CONTEXT_PATH.concat("/auth/sign-up")
+    );
+
+    public static final JspPage PROFILE = new JspPage(
+            VIEW_DIR.concat("/profile/index.jsp"), CONTEXT_PATH.concat("/profile")
+    );
 
     static {
         DEFAULTS.addAll(Arrays.asList(
                 INDEX,
-                PROFILE,
-                SIGN_IN,
-                SIGN_UP
+                SIGN_IN, SIGN_UP,
+                PROFILE
         ));
     }
 
