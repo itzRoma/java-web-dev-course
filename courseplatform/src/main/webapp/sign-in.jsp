@@ -15,7 +15,7 @@
                             <a href="${requestScope.redirectTo}" class="text-black-50 fw-bold">Back</a>
                         </div>
 
-                        <div class="my-3 invalid-feedback text-start">
+                        <div class="my-3 text-start text-danger">
                                 ${requestScope.error}
                         </div>
 

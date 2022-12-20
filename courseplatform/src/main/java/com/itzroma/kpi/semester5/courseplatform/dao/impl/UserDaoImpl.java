@@ -29,6 +29,11 @@ public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> i
 
     private static final String GET_USER_ROLE_BY_EMAIL_QUERY = "SELECT role FROM user WHERE email = ?";
 
+    private static final String UPDATE_USER_BY_USER_ID_QUERY =
+            "UPDATE user SET first_name = ?, last_name = ?, email = ? WHERE id = ?";
+
+    private static final String GET_USER_EMAIL_BY_USER_ID_QUERY = "SELECT email FROM user WHERE id = ?";
+
     @Override
     public T create(T entity) throws UnsuccessfulOperationException {
         ResultSet rs = null;
@@ -145,6 +150,45 @@ public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> i
             rs = ps.executeQuery();
             if (rs.next()) {
                 return Role.valueOf(rs.getString(++i));
+            }
+            throw new SQLException("Cannot get user role by email");
+        } catch (SQLException ex) {
+            throw new UnsuccessfulOperationException(ex);
+        } finally {
+            DBUtils.close(rs);
+        }
+    }
+
+    @Override
+    public T updateByUserId(Long targetId, User source) throws UnsuccessfulOperationException {
+        try (PreparedStatement ps = connection.prepareStatement(UPDATE_USER_BY_USER_ID_QUERY)) {
+            int i = 0;
+            ps.setString(++i, source.getFirstName());
+            ps.setString(++i, source.getLastName());
+            ps.setString(++i, source.getEmail());
+            ps.setLong(++i, targetId);
+
+            SQLException exception = new SQLException("Cannot update user with id %d".formatted(targetId));
+            if (ps.executeUpdate() == 0) {
+                throw exception;
+            }
+            return findByEmail(source.getEmail()).orElseThrow(() -> exception);
+        } catch (SQLException ex) {
+            throw new UnsuccessfulOperationException(ex);
+        }
+    }
+
+    @Override
+    public String getEmailByUserId(Long userId) throws UnsuccessfulOperationException {
+        ResultSet rs = null;
+        try (PreparedStatement ps = connection.prepareStatement(GET_USER_EMAIL_BY_USER_ID_QUERY)) {
+            int i = 0;
+            ps.setLong(++i, userId);
+
+            i = 0;
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString(++i);
             }
             throw new SQLException("Cannot get user role by email");
         } catch (SQLException ex) {

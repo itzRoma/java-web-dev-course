@@ -24,12 +24,15 @@ public record JspPage(String jspPath, String url) {
     public static final JspPage PROFILE = new JspPage(
             VIEW_DIR.concat("/profile/index.jsp"), CONTEXT_PATH.concat("/profile")
     );
+    public static final JspPage UPDATE_PROFILE = new JspPage(
+            VIEW_DIR.concat("/profile/update.jsp"), CONTEXT_PATH.concat("/profile/update")
+    );
 
     static {
         DEFAULTS.addAll(Arrays.asList(
                 INDEX,
                 SIGN_IN, SIGN_UP,
-                PROFILE
+                PROFILE, UPDATE_PROFILE
         ));
     }
 

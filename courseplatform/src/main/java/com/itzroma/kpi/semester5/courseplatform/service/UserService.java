@@ -16,4 +16,6 @@ public interface UserService<ID, T extends User> {
     T findByEmail(String email) throws EntityNotFoundException, ServiceException;
 
     Role getRoleByEmail(String email) throws ServiceException;
+
+    T updateByUserId(ID targetId, T source) throws EntityExistsException, ServiceException;
 }

@@ -5,6 +5,7 @@ import com.itzroma.kpi.semester5.courseplatform.dao.impl.AdminDaoImpl;
 import com.itzroma.kpi.semester5.courseplatform.dao.impl.StudentDaoImpl;
 import com.itzroma.kpi.semester5.courseplatform.db.Transaction;
 import com.itzroma.kpi.semester5.courseplatform.exception.dao.UnsuccessfulOperationException;
+import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityExistsException;
 import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceException;
 import com.itzroma.kpi.semester5.courseplatform.model.Admin;
 import com.itzroma.kpi.semester5.courseplatform.model.Role;
@@ -72,6 +73,30 @@ public abstract class UserServiceImpl<T extends User> implements UserService<Lon
         } catch (UnsuccessfulOperationException ex) {
             transaction.rollback();
             log.warning(() -> "Cannot get user role by email: %s".formatted(ex.getMessage()));
+            throw new ServiceException(ex);
+        } finally {
+            transaction.closeTransaction();
+        }
+    }
+
+    @Override
+    public T updateByUserId(Long targetId, T source) throws EntityExistsException, ServiceException {
+        Transaction transaction = new Transaction();
+        transaction.openTransaction(dao);
+        try {
+            if (dao.existsByEmail(source.getEmail()) && !dao.getEmailByUserId(targetId).equals(source.getEmail())) {
+                transaction.closeTransaction();
+                String message = "Email is already taken";
+                log.warning(() -> "Cannot update user with id %d: %s".formatted(targetId, message));
+                throw new EntityExistsException(message);
+            }
+            T updated = dao.updateByUserId(targetId, source);
+            transaction.commit();
+            log.info(() -> "Updated user with id %d".formatted(targetId));
+            return updated;
+        } catch (UnsuccessfulOperationException ex) {
+            transaction.rollback();
+            log.warning(() -> "Cannot update user with id %d: %s".formatted(targetId, ex.getMessage()));
             throw new ServiceException(ex);
         } finally {
             transaction.closeTransaction();

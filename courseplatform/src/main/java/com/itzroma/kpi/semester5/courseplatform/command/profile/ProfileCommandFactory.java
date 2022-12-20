@@ -42,6 +42,9 @@ public class ProfileCommandFactory extends CommandFactory {
             case "" -> request.getMethod().equals("GET")
                     ? new GetProfileCommand(request, response)
                     : new InternalServerErrorCommand(request, response);
+            case "/update" -> request.getMethod().equals("GET")
+                    ? new GetUpdateProfileCommand(request, response)
+                    : new PostUpdateProfileCommand(request, response);
             default -> invalidCommand();
         };
     }
