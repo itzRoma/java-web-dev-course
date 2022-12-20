@@ -11,6 +11,7 @@
 
     <modules>
         <module>lab1-multithreading</module>
+        <module>courseplatform</module>
     </modules>
 
     <properties>
