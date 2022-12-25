@@ -37,6 +37,10 @@ public class PostSignInCommand extends Command {
                 request.setAttribute("passwordError", "Invalid password");
                 return new View(JspPage.SIGN_IN, DispatchType.FORWARD);
             }
+            if (service.isStudentBlocked(emailParameter)) {
+                request.setAttribute("error", "Your account is blocked");
+                return new View(JspPage.SIGN_IN, DispatchType.FORWARD);
+            }
             signInInSession(request, emailParameter, service.getRoleByEmail(emailParameter));
             return View.fromUrl(redirectTo, JspPage.PROFILE, DispatchType.REDIRECT);
         } catch (ServiceException ex) {

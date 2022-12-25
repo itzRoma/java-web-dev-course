@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="com.itzroma.kpi.semester5.courseplatform.model.Role" %>
 
 <nav class="navbar bg-light">
     <div class="container">
@@ -31,11 +32,19 @@
                         </button>
 
                         <ul class="dropdown-menu">
+                            <c:if test="${sessionScope.role == Role.ADMIN}">
+                                <li>
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/admin-dashboard">
+                                        Admin dashboard
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                            </c:if>
                             <li>
-                                <form class="m-0"
+                                <form class="m-0 dropdown-item"
                                       action="${pageContext.request.contextPath}/auth/sign-out?redirect-to=..."
                                       method="post">
-                                    <button type="submit" class="btn">Sign out</button>
+                                    <button type="submit" class="btn p-0">Sign out</button>
                                 </form>
                             </li>
                         </ul>

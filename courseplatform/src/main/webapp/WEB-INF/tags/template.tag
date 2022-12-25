@@ -9,7 +9,7 @@
 </head>
 <body style="min-height: 100vh; display: flex; flex-direction: column;">
 <jsp:invoke fragment="header"/>
-<div style="margin: auto 0">
+<div style="margin: auto 0; padding: 3rem 0;">
     <jsp:doBody/>
 </div>
 <jsp:invoke fragment="footer"/>

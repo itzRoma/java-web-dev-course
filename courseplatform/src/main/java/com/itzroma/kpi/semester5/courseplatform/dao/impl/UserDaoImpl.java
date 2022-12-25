@@ -7,6 +7,9 @@ import com.itzroma.kpi.semester5.courseplatform.model.Role;
 import com.itzroma.kpi.semester5.courseplatform.model.User;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> implements UserDao<T> {
@@ -33,6 +36,10 @@ public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> i
             "UPDATE user SET first_name = ?, last_name = ?, email = ? WHERE id = ?";
 
     private static final String GET_USER_EMAIL_BY_USER_ID_QUERY = "SELECT email FROM user WHERE id = ?";
+
+    private static final String FIND_MANY_USERS = "SELECT * FROM user WHERE role = ? LIMIT ?";
+
+    private static final String FIND_ALL_USERS = "SELECT * FROM user WHERE role = ?";
 
     @Override
     public T create(T entity) throws UnsuccessfulOperationException {
@@ -115,13 +122,7 @@ public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> i
             i = 0;
             rs = ps.executeQuery();
             while (rs.next()) {
-                entity.setUserId(rs.getLong(++i));
-                entity.setFirstName(rs.getString(++i));
-                entity.setLastName(rs.getString(++i));
-                entity.setEmail(rs.getString(++i));
-                entity.setPassword(rs.getString(++i));
-                entity.setRole(Role.valueOf(rs.getString(++i)));
-                entity.setRegistrationDate(rs.getTimestamp(++i).toLocalDateTime());
+                extractNewUserFromResultSet(entity, rs, i);
             }
             return Optional.of(entity);
         } catch (SQLException ex) {
@@ -191,6 +192,66 @@ public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> i
                 return rs.getString(++i);
             }
             throw new SQLException("Cannot get user role by email");
+        } catch (SQLException ex) {
+            throw new UnsuccessfulOperationException(ex);
+        } finally {
+            DBUtils.close(rs);
+        }
+    }
+
+    @Override
+    public List<T> findMany(int quantity, Role role) throws UnsuccessfulOperationException {
+        ResultSet rs = null;
+        List<T> res = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(FIND_MANY_USERS)) {
+            int i = 0;
+            ps.setString(++i, role.name());
+            ps.setInt(++i, quantity);
+
+            i = 0;
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                T user = instantiateNewEntity();
+                if (user == null) return Collections.emptyList();
+
+                extractNewUserFromResultSet(user, rs, i);
+                res.add(user);
+            }
+            return res;
+        } catch (SQLException ex) {
+            throw new UnsuccessfulOperationException(ex);
+        } finally {
+            DBUtils.close(rs);
+        }
+    }
+
+    private void extractNewUserFromResultSet(T user, ResultSet rs, int i) throws SQLException {
+        user.setUserId(rs.getLong(++i));
+        user.setFirstName(rs.getString(++i));
+        user.setLastName(rs.getString(++i));
+        user.setEmail(rs.getString(++i));
+        user.setPassword(rs.getString(++i));
+        user.setRole(Role.valueOf(rs.getString(++i)));
+        user.setRegistrationDate(rs.getTimestamp(++i).toLocalDateTime());
+    }
+
+    protected List<T> findAll(Role role) throws UnsuccessfulOperationException {
+        ResultSet rs = null;
+        List<T> res = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(FIND_ALL_USERS)) {
+            int i = 0;
+            ps.setString(++i, role.name());
+
+            i = 0;
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                T user = instantiateNewEntity();
+                if (user == null) return Collections.emptyList();
+
+                extractNewUserFromResultSet(user, rs, i);
+                res.add(user);
+            }
+            return res;
         } catch (SQLException ex) {
             throw new UnsuccessfulOperationException(ex);
         } finally {

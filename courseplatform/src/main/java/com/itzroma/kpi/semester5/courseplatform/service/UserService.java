@@ -6,6 +6,8 @@ import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceExcepti
 import com.itzroma.kpi.semester5.courseplatform.model.Role;
 import com.itzroma.kpi.semester5.courseplatform.model.User;
 
+import java.util.List;
+
 public interface UserService<ID, T extends User> {
     T register(T entity) throws EntityExistsException, ServiceException;
 
@@ -18,4 +20,8 @@ public interface UserService<ID, T extends User> {
     Role getRoleByEmail(String email) throws ServiceException;
 
     T updateByUserId(ID targetId, T source) throws EntityExistsException, ServiceException;
+
+    List<T> findMany(int quantity) throws ServiceException;
+
+    List<T> findAll() throws ServiceException;
 }

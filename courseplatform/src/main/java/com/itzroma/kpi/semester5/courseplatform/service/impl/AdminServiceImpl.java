@@ -10,6 +10,8 @@ import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceExcepti
 import com.itzroma.kpi.semester5.courseplatform.model.Admin;
 import com.itzroma.kpi.semester5.courseplatform.service.AdminService;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -66,5 +68,15 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
         } finally {
             transaction.closeTransaction();
         }
+    }
+
+    @Override
+    public List<Admin> findMany(int quantity) throws ServiceException {
+        throw new ServiceException("Not implemented");
+    }
+
+    @Override
+    public List<Admin> findAll() throws ServiceException {
+        return Collections.emptyList();
     }
 }

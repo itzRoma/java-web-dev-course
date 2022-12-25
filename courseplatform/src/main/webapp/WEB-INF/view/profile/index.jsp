@@ -1,9 +1,10 @@
 <%@ page contentType="text/html;charset=utf-8" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <t:page title="CoursePlatform | Profile">
-    <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="container">
+        <div class="row d-flex justify-content-center align-items-center">
             <div class="col col-lg-9 col-xl-7">
                 <div class="card">
                     <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
@@ -12,10 +13,12 @@
                                  alt="Generic placeholder image"
                                  class="img-fluid img-thumbnail mt-4 mb-2"
                                  style="width: 150px; z-index: 1">
-                            <a href="${pageContext.request.contextPath}/profile/update"
-                               class="btn btn-outline-dark"
-                               data-mdb-ripple-color="dark"
-                               style="z-index: 1;">Update profile</a>
+                            <c:if test="${requestScope.user.email.equals(sessionScope.email)}">
+                                <a href="${pageContext.request.contextPath}/profile/update"
+                                   class="btn btn-outline-dark"
+                                   data-mdb-ripple-color="dark"
+                                   style="z-index: 1;">Update profile</a>
+                            </c:if>
                         </div>
                         <div class="ms-3" style="margin-top: 130px;">
                             <h5>${requestScope.user.firstName} ${requestScope.user.lastName}</h5>

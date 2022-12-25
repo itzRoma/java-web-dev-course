@@ -4,6 +4,7 @@ import com.itzroma.kpi.semester5.courseplatform.exception.dao.UnsuccessfulOperat
 import com.itzroma.kpi.semester5.courseplatform.model.Role;
 import com.itzroma.kpi.semester5.courseplatform.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserDao<T extends User> extends CrudDao<Long, T> {
@@ -18,4 +19,6 @@ public interface UserDao<T extends User> extends CrudDao<Long, T> {
     T updateByUserId(Long targetId, User source) throws UnsuccessfulOperationException;
 
     String getEmailByUserId(Long userId) throws UnsuccessfulOperationException;
+
+    List<T> findMany(int quantity, Role role) throws UnsuccessfulOperationException;
 }

@@ -7,9 +7,11 @@ import com.itzroma.kpi.semester5.courseplatform.exception.dao.UnsuccessfulOperat
 import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityExistsException;
 import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityNotFoundException;
 import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceException;
+import com.itzroma.kpi.semester5.courseplatform.model.Role;
 import com.itzroma.kpi.semester5.courseplatform.model.Student;
 import com.itzroma.kpi.semester5.courseplatform.service.StudentService;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -62,6 +64,80 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
         } catch (UnsuccessfulOperationException ex) {
             transaction.rollback();
             log.warning(() -> "Cannot find student by email: %s".formatted(ex.getMessage()));
+            throw new ServiceException(ex);
+        } finally {
+            transaction.closeTransaction();
+        }
+    }
+
+    @Override
+    public List<Student> findMany(int quantity) throws ServiceException {
+        StudentDao dao = new StudentDaoImpl();
+        Transaction transaction = new Transaction();
+        transaction.openTransaction(dao);
+        try {
+            List<Student> students = dao.findMany(quantity);
+            transaction.commit();
+            return students;
+        } catch (UnsuccessfulOperationException ex) {
+            transaction.rollback();
+            log.warning(() -> "Cannot find %d students: %s".formatted(quantity, ex.getMessage()));
+            throw new ServiceException(ex);
+        } finally {
+            transaction.closeTransaction();
+        }
+    }
+
+    @Override
+    public List<Student> findAll() throws ServiceException {
+        StudentDao dao = new StudentDaoImpl();
+        Transaction transaction = new Transaction();
+        transaction.openTransaction(dao);
+        try {
+            List<Student> students = dao.findAll();
+            transaction.commit();
+            return students;
+        } catch (UnsuccessfulOperationException ex) {
+            transaction.rollback();
+            log.warning(() -> "Cannot find all students: %s".formatted(ex.getMessage()));
+            throw new ServiceException(ex);
+        } finally {
+            transaction.closeTransaction();
+        }
+    }
+
+    @Override
+    public void toggleBlock(Student student) throws ServiceException {
+        StudentDao dao = new StudentDaoImpl();
+        Transaction transaction = new Transaction();
+        transaction.openTransaction(dao);
+        try {
+            dao.toggleBlock(student);
+            transaction.commit();
+        } catch (UnsuccessfulOperationException ex) {
+            transaction.rollback();
+            log.warning(ex.getMessage());
+            throw new ServiceException(ex);
+        } finally {
+            transaction.closeTransaction();
+        }
+    }
+
+    @Override
+    public boolean isStudentBlocked(String email) throws ServiceException {
+        StudentDao dao = new StudentDaoImpl();
+        Transaction transaction = new Transaction();
+        transaction.openTransaction(dao);
+        try {
+            boolean blocked = false;
+            if (dao.getRoleByEmail(email) == Role.STUDENT) {
+                blocked = dao.isStudentBlocked(email);
+                transaction.commit();
+            }
+            return blocked;
+        } catch (UnsuccessfulOperationException ex) {
+            transaction.rollback();
+            log.warning(ex.getMessage());
             throw new ServiceException(ex);
         } finally {
             transaction.closeTransaction();

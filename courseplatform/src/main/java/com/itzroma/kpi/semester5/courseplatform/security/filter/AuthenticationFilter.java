@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebFilter(filterName = "AuthenticationFilter", value = "/profile/*")
-public class AuthenticationFilter implements Filter {
+public class AuthenticationFilter extends AbstractAuthFilter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest req = (HttpServletRequest) request;
@@ -27,11 +27,5 @@ public class AuthenticationFilter implements Filter {
             view.addQueryParameter("redirect-to", req.getRequestURI());
             new ViewDispatcher(view, req, resp).dispatch();
         }
-    }
-
-    private boolean isLoggedIn(HttpSession session) {
-        return session != null
-                && session.getAttribute("email") != null
-                && session.getAttribute("role") != null;
     }
 }

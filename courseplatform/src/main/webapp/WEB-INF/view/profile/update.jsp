@@ -11,8 +11,9 @@
 
                         <h3>Update profile</h3>
 
-                        <div class="my-3 text-start">&leftarrow;
-                            <a href="${pageContext.request.contextPath}/profile" class="text-black-50 fw-bold">Back</a>
+                        <div class="my-3 text-start">
+                            <a href="${pageContext.request.contextPath}/profile"
+                               class="text-black-50 fw-bold text-decoration-none">&leftarrow; Back</a>
                         </div>
 
                         <div class="my-3 text-start text-danger">
