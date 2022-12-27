@@ -35,33 +35,29 @@
             </div>
             <div class="col">
                 <table class="table table-sm table-hover caption-top">
-                    <caption>Recently registered teachers</caption>
+                    <caption>
+                        Recently registered teachers,
+                        <a href="${pageContext.request.contextPath}/admin-dashboard/teachers"> show all</a>
+                    </caption>
                     <thead>
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
+                        <th scope="col">User ID</th>
+                        <th scope="col">Teacher ID</th>
+                        <th scope="col">First name</th>
+                        <th scope="col">Last name</th>
+                        <th scope="col">Email</th>
                     </tr>
                     </thead>
                     <tbody class="table-group-divider">
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td colspan="2">Larry the Bird</td>
-                        <td>@twitter</td>
-                    </tr>
+                    <c:forEach items="${requestScope.teachers}" var="teacher">
+                        <tr>
+                            <th scope="row">${teacher.userId}</th>
+                            <td>${teacher.teacherId}</td>
+                            <td>${teacher.firstName}</td>
+                            <td>${teacher.lastName}</td>
+                            <td>${teacher.email}</td>
+                        </tr>
+                    </c:forEach>
                     </tbody>
                 </table>
             </div>

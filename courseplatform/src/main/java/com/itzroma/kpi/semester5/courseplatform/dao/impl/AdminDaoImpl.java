@@ -24,7 +24,7 @@ public class AdminDaoImpl extends UserDaoImpl<Admin> implements AdminDao {
 
     @Override
     public Admin create(Admin entity) throws UnsuccessfulOperationException {
-        super.create(entity);
+        Admin created = super.create(entity);
 
         ResultSet rs = null;
         try (PreparedStatement ps = connection.prepareStatement(CREATE_ADMIN_QUERY, Statement.RETURN_GENERATED_KEYS)) {
@@ -34,8 +34,8 @@ public class AdminDaoImpl extends UserDaoImpl<Admin> implements AdminDao {
             if (ps.executeUpdate() > 0) {
                 rs = ps.getGeneratedKeys();
                 if (rs.next()) {
-                    entity.setAdminId(rs.getLong(1));
-                    return entity;
+                    created.setAdminId(rs.getLong(1));
+                    return created;
                 }
             }
             throw new SQLException("Cannot create new admin and return admin id");

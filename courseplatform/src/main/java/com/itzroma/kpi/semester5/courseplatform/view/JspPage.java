@@ -32,13 +32,16 @@ public record JspPage(String jspPath, String url) {
     public static final JspPage AD_STUDENTS = new JspPage(
             VIEW_DIR.concat("/admin/students.jsp"), CONTEXT_PATH.concat("/admin-dashboard/students")
     );
+    public static final JspPage AD_TEACHERS = new JspPage(
+            VIEW_DIR.concat("/admin/teachers.jsp"), CONTEXT_PATH.concat("/admin-dashboard/teachers")
+    );
 
     static {
         DEFAULTS = Set.of(
                 INDEX,
                 SIGN_IN, SIGN_UP,
                 PROFILE, UPDATE_PROFILE,
-                ADMIN_DASHBOARD, AD_STUDENTS
+                ADMIN_DASHBOARD, AD_STUDENTS, AD_TEACHERS
         );
     }
 

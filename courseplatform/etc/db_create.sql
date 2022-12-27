@@ -70,6 +70,24 @@ CREATE TABLE IF NOT EXISTS `courseplatform`.`admin` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `courseplatform`.`teacher`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`teacher` ;
+
+CREATE TABLE IF NOT EXISTS `courseplatform`.`teacher` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_teacher_user1_idx` (`user_id` ASC) VISIBLE,
+  CONSTRAINT `fk_teacher_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `courseplatform`.`user` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

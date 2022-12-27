@@ -17,6 +17,8 @@ public class AdminDashboardCommandFactory extends CommandFactory {
     private static final String STUDENT_VIEW_REGEX = "^/students/([\\w-.]+@\\w+(\\.\\w+)?)$";
     private static final String STUDENT_TOGGLE_BLOCK_REGEX = "^/students/([\\w-.]+@\\w+(\\.\\w+)?)/toggle-block$";
 
+    private static final String TEACHER_VIEW_REGEX = "^/teachers/([\\w-.]+@\\w+(\\.\\w+)?)$";
+
     public AdminDashboardCommandFactory(HttpServletRequest request, HttpServletResponse response) {
         super(ADMIN_DASHBOARD_COMMAND_REGEX, request, response);
     }
@@ -32,6 +34,9 @@ public class AdminDashboardCommandFactory extends CommandFactory {
                     : new InternalServerErrorCommand(request, response);
             case "/students" -> request.getMethod().equals("GET")
                     ? new GetStudentsCommand(request, response)
+                    : new InternalServerErrorCommand(request, response);
+            case "/teachers" -> request.getMethod().equals("GET")
+                    ? new GetTeachersCommand(request, response)
                     : new InternalServerErrorCommand(request, response);
             default -> {
                 if (action.matches(STUDENT_VIEW_REGEX)) {
@@ -55,6 +60,17 @@ public class AdminDashboardCommandFactory extends CommandFactory {
                     yield request.getMethod().equals("GET")
                             ? new NotFoundCommand(request, response)
                             : new PostToggleBlockCommand(request, response);
+                }
+                if (action.matches(TEACHER_VIEW_REGEX)) {
+                    Matcher matcher = Pattern.compile(TEACHER_VIEW_REGEX).matcher(action);
+                    if (matcher.find()) {
+                        request.setAttribute("email", matcher.group(1));
+                    } else {
+                        throw new EntityNotFoundException("Teacher not found");
+                    }
+                    yield request.getMethod().equals("GET")
+                            ? new GetTeacherCommand(request, response)
+                            : new InternalServerErrorCommand(request, response);
                 }
                 yield invalidCommand();
             }
