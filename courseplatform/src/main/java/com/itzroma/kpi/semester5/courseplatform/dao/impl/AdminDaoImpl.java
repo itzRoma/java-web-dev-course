@@ -52,6 +52,11 @@ public class AdminDaoImpl extends UserDaoImpl<Admin> implements AdminDao {
     }
 
     @Override
+    public List<Admin> findMany(int quantity) throws UnsuccessfulOperationException {
+        return Collections.emptyList();
+    }
+
+    @Override
     public List<Admin> findAll() throws UnsuccessfulOperationException {
         return Collections.emptyList();
     }

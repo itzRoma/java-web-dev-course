@@ -132,6 +132,16 @@ public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> i
         }
     }
 
+    private void extractNewUserFromResultSet(T user, ResultSet rs, int i) throws SQLException {
+        user.setUserId(rs.getLong(++i));
+        user.setFirstName(rs.getString(++i));
+        user.setLastName(rs.getString(++i));
+        user.setEmail(rs.getString(++i));
+        user.setPassword(rs.getString(++i));
+        user.setRole(Role.valueOf(rs.getString(++i)));
+        user.setRegistrationDate(rs.getTimestamp(++i).toLocalDateTime());
+    }
+
     private T instantiateNewEntity() {
         try {
             return entityClass.getConstructor().newInstance();
@@ -199,8 +209,7 @@ public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> i
         }
     }
 
-    @Override
-    public List<T> findMany(int quantity, Role role) throws UnsuccessfulOperationException {
+    protected List<T> findMany(int quantity, Role role) throws UnsuccessfulOperationException {
         ResultSet rs = null;
         List<T> res = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(FIND_MANY_USERS)) {
@@ -223,16 +232,6 @@ public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> i
         } finally {
             DBUtils.close(rs);
         }
-    }
-
-    private void extractNewUserFromResultSet(T user, ResultSet rs, int i) throws SQLException {
-        user.setUserId(rs.getLong(++i));
-        user.setFirstName(rs.getString(++i));
-        user.setLastName(rs.getString(++i));
-        user.setEmail(rs.getString(++i));
-        user.setPassword(rs.getString(++i));
-        user.setRole(Role.valueOf(rs.getString(++i)));
-        user.setRegistrationDate(rs.getTimestamp(++i).toLocalDateTime());
     }
 
     protected List<T> findAll(Role role) throws UnsuccessfulOperationException {

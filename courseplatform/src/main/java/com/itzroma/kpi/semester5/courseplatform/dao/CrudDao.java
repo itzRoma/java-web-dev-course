@@ -13,6 +13,8 @@ public interface CrudDao<ID, T extends Entity<ID>> extends AbstractDao<ID, T> {
     // R - read (one)
     Optional<T> findById(ID id) throws UnsuccessfulOperationException;
 
+    List<T> findMany(int quantity) throws UnsuccessfulOperationException;
+
     // R - read (all)
     List<T> findAll() throws UnsuccessfulOperationException;
 

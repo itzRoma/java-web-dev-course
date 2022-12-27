@@ -72,7 +72,7 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
 
     @Override
     public List<Admin> findMany(int quantity) throws ServiceException {
-        throw new ServiceException("Not implemented");
+        return Collections.emptyList();
     }
 
     @Override

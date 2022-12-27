@@ -33,7 +33,7 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
 
     @Override
     public Student create(Student entity) throws UnsuccessfulOperationException {
-        super.create(entity);
+        Student created = super.create(entity);
 
         ResultSet rs = null;
         try (PreparedStatement ps = connection.prepareStatement(CREATE_STUDENT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
@@ -44,8 +44,8 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
             if (ps.executeUpdate() > 0) {
                 rs = ps.getGeneratedKeys();
                 if (rs.next()) {
-                    entity.setStudentId(rs.getLong(1));
-                    return entity;
+                    created.setStudentId(rs.getLong(1));
+                    return created;
                 }
             }
             throw new SQLException("Cannot create new student and return student id");
@@ -163,7 +163,7 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
         ResultSet rs = null;
         try (PreparedStatement ps = connection.prepareStatement(CHECK_IF_BLOCKED)) {
             int i = 0;
-            ps.setLong(++i, convertStudentEmailToUserId(email));
+            ps.setLong(++i, getUserIdByEmail(email));
 
             i = 0;
             rs = ps.executeQuery();
@@ -178,7 +178,7 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
         }
     }
 
-    private long convertStudentEmailToUserId(String email) {
+    private long getUserIdByEmail(String email) {
         String sql = "SELECT id FROM user WHERE email = ?";
 
         ResultSet rs = null;
