@@ -22,7 +22,7 @@ public class TeacherDaoImpl extends UserDaoImpl<Teacher> implements TeacherDao {
 
     private static final String FIND_TEACHER_BY_USER_ID_QUERY = "SELECT * FROM teacher WHERE user_id = ?";
 
-    private static final String FIND_MANY_TEACHERS = "SELECT * FROM teacher LIMIT ?";
+    private static final String FIND_MANY_TEACHERS = "SELECT * FROM teacher ORDER BY id DESC LIMIT ?";
 
     private static final String FIND_ALL_TEACHERS = "SELECT * FROM teacher";
 
@@ -31,7 +31,9 @@ public class TeacherDaoImpl extends UserDaoImpl<Teacher> implements TeacherDao {
         Teacher created = super.create(entity);
 
         ResultSet rs = null;
-        try (PreparedStatement ps = connection.prepareStatement(CREATE_TEACHER_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                CREATE_TEACHER_QUERY, Statement.RETURN_GENERATED_KEYS
+        )) {
             int i = 0;
             ps.setLong(++i, entity.getUserId());
 
@@ -51,13 +53,8 @@ public class TeacherDaoImpl extends UserDaoImpl<Teacher> implements TeacherDao {
     }
 
     @Override
-    public Optional<Teacher> findById(Long id) throws UnsuccessfulOperationException {
-        return Optional.empty();
-    }
-
-    @Override
     public List<Teacher> findMany(int quantity) throws UnsuccessfulOperationException {
-        List<Teacher> teachers = super.findMany(quantity, Role.TEACHER);
+        List<Teacher> teachers = super.findManyUsers(quantity, Role.TEACHER);
 
         ResultSet rs = null;
         try (PreparedStatement ps = connection.prepareStatement(FIND_MANY_TEACHERS)) {
@@ -82,7 +79,7 @@ public class TeacherDaoImpl extends UserDaoImpl<Teacher> implements TeacherDao {
 
     @Override
     public List<Teacher> findAll() throws UnsuccessfulOperationException {
-        List<Teacher> teachers = super.findAll(Role.TEACHER);
+        List<Teacher> teachers = super.findAllUsers(Role.TEACHER);
 
         ResultSet rs = null;
         try (PreparedStatement ps = connection.prepareStatement(FIND_ALL_TEACHERS)) {
@@ -104,13 +101,18 @@ public class TeacherDaoImpl extends UserDaoImpl<Teacher> implements TeacherDao {
     }
 
     @Override
-    public Teacher update(Teacher target, Teacher source) throws UnsuccessfulOperationException {
-        return null;
+    public boolean existsByEmail(String email) throws UnsuccessfulOperationException {
+        return existsByEmail(email, Role.TEACHER);
+    }
+
+    @Override
+    public boolean existsByEmailAndPassword(String email, String password) throws UnsuccessfulOperationException {
+        return existsByEmailAndPassword(email, password, Role.TEACHER);
     }
 
     @Override
     public Optional<Teacher> findByEmail(String email) throws UnsuccessfulOperationException {
-        Optional<Teacher> teacher = super.findByEmail(email);
+        Optional<Teacher> teacher = super.findUserByEmail(email, Role.TEACHER);
         if (teacher.isEmpty()) return Optional.empty();
 
         ResultSet rs = null;

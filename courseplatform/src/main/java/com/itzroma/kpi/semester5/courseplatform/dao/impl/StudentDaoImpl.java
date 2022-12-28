@@ -23,7 +23,7 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
 
     private static final String FIND_STUDENT_BY_USER_ID_QUERY = "SELECT * FROM student WHERE user_id = ?";
 
-    private static final String FIND_MANY_STUDENTS = "SELECT * FROM student LIMIT ?";
+    private static final String FIND_MANY_STUDENTS = "SELECT * FROM student ORDER BY id DESC LIMIT ?";
 
     private static final String FIND_ALL_STUDENTS = "SELECT * FROM student";
 
@@ -36,7 +36,9 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
         Student created = super.create(entity);
 
         ResultSet rs = null;
-        try (PreparedStatement ps = connection.prepareStatement(CREATE_STUDENT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                CREATE_STUDENT_QUERY, Statement.RETURN_GENERATED_KEYS
+        )) {
             int i = 0;
             ps.setBoolean(++i, entity.getBlocked());
             ps.setLong(++i, entity.getUserId());
@@ -57,18 +59,15 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
     }
 
     @Override
-    public Optional<Student> findById(Long id) throws UnsuccessfulOperationException {
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Student> findAll() throws UnsuccessfulOperationException {
-        List<Student> students = super.findAll(Role.STUDENT);
+    public List<Student> findMany(int quantity) throws UnsuccessfulOperationException {
+        List<Student> students = super.findManyUsers(quantity, Role.STUDENT);
 
         ResultSet rs = null;
-        try (PreparedStatement ps = connection.prepareStatement(FIND_ALL_STUDENTS)) {
+        try (PreparedStatement ps = connection.prepareStatement(FIND_MANY_STUDENTS)) {
+            int i = 0;
+            ps.setInt(++i, quantity);
+
             rs = ps.executeQuery();
-            int i;
             int j = 0;
             while (rs.next()) {
                 i = 0;
@@ -86,45 +85,13 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
     }
 
     @Override
-    public Student update(Student target, Student source) throws UnsuccessfulOperationException {
-        return null;
-    }
-
-    @Override
-    public Optional<Student> findByEmail(String email) throws UnsuccessfulOperationException {
-        Optional<Student> student = super.findByEmail(email);
-        if (student.isEmpty()) return Optional.empty();
+    public List<Student> findAll() throws UnsuccessfulOperationException {
+        List<Student> students = super.findAllUsers(Role.STUDENT);
 
         ResultSet rs = null;
-        try (PreparedStatement ps = connection.prepareStatement(FIND_STUDENT_BY_USER_ID_QUERY)) {
-            int i = 0;
-            ps.setLong(++i, student.get().getUserId());
-
-            i = 0;
+        try (PreparedStatement ps = connection.prepareStatement(FIND_ALL_STUDENTS)) {
             rs = ps.executeQuery();
-            while (rs.next()) {
-                student.get().setStudentId(rs.getLong(++i));
-                student.get().setBlocked(rs.getBoolean(++i));
-                student.get().setUserId(rs.getLong(++i));
-            }
-            return student;
-        } catch (SQLException ex) {
-            throw new UnsuccessfulOperationException(ex);
-        } finally {
-            DBUtils.close(rs);
-        }
-    }
-
-    @Override
-    public List<Student> findMany(int quantity) throws UnsuccessfulOperationException {
-        List<Student> students = super.findMany(quantity, Role.STUDENT);
-
-        ResultSet rs = null;
-        try (PreparedStatement ps = connection.prepareStatement(FIND_MANY_STUDENTS)) {
-            int i = 0;
-            ps.setInt(++i, quantity);
-
-            rs = ps.executeQuery();
+            int i;
             int j = 0;
             while (rs.next()) {
                 i = 0;
@@ -170,7 +137,7 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
             if (rs.next()) {
                 return rs.getBoolean(++i);
             }
-            throw new SQLException("Cannot check if student with email '%s' is blocked".formatted(email));
+            throw new SQLException("Cannot check if student is blocked");
         } catch (SQLException ex) {
             throw new UnsuccessfulOperationException(ex);
         } finally {
@@ -191,7 +158,42 @@ public class StudentDaoImpl extends UserDaoImpl<Student> implements StudentDao {
             if (rs.next()) {
                 return rs.getLong(++i);
             }
-            throw new SQLException("Cannot convert student email to user id");
+            throw new SQLException("Cannot get user id by email");
+        } catch (SQLException ex) {
+            throw new UnsuccessfulOperationException(ex);
+        } finally {
+            DBUtils.close(rs);
+        }
+    }
+
+    @Override
+    public boolean existsByEmail(String email) throws UnsuccessfulOperationException {
+        return existsByEmail(email, Role.STUDENT);
+    }
+
+    @Override
+    public boolean existsByEmailAndPassword(String email, String password) throws UnsuccessfulOperationException {
+        return existsByEmailAndPassword(email, password, Role.STUDENT);
+    }
+
+    @Override
+    public Optional<Student> findByEmail(String email) throws UnsuccessfulOperationException {
+        Optional<Student> student = super.findUserByEmail(email, Role.STUDENT);
+        if (student.isEmpty()) return Optional.empty();
+
+        ResultSet rs = null;
+        try (PreparedStatement ps = connection.prepareStatement(FIND_STUDENT_BY_USER_ID_QUERY)) {
+            int i = 0;
+            ps.setLong(++i, student.get().getUserId());
+
+            i = 0;
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                student.get().setStudentId(rs.getLong(++i));
+                student.get().setBlocked(rs.getBoolean(++i));
+                student.get().setUserId(rs.getLong(++i));
+            }
+            return student;
         } catch (SQLException ex) {
             throw new UnsuccessfulOperationException(ex);
         } finally {

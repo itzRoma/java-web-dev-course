@@ -7,6 +7,7 @@ import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceExcepti
 import com.itzroma.kpi.semester5.courseplatform.model.Role;
 import com.itzroma.kpi.semester5.courseplatform.service.impl.AdminServiceImpl;
 import com.itzroma.kpi.semester5.courseplatform.service.impl.StudentServiceImpl;
+import com.itzroma.kpi.semester5.courseplatform.service.impl.TeacherServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,17 +23,19 @@ public class ProfileCommandFactory extends CommandFactory {
     public Command defineCommand() {
         if (action == null) return invalidCommand();
 
+        String emailAttribute = (String) request.getSession().getAttribute("email");
         try {
-            if (request.getSession().getAttribute("role") == Role.ADMIN) {
-                request.setAttribute(
-                        "user",
-                        new AdminServiceImpl().findByEmail((String) request.getSession().getAttribute("email"))
+            switch (Role.valueOf(request.getSession().getAttribute("role").toString())) {
+                case STUDENT -> request.setAttribute(
+                        "user", new StudentServiceImpl().findByEmail(emailAttribute)
                 );
-            } else {
-                request.setAttribute(
-                        "user",
-                        new StudentServiceImpl().findByEmail((String) request.getSession().getAttribute("email"))
+                case TEACHER -> request.setAttribute(
+                        "user", new TeacherServiceImpl().findByEmail(emailAttribute)
                 );
+                case ADMIN -> request.setAttribute(
+                        "user", new AdminServiceImpl().findByEmail(emailAttribute)
+                );
+                default -> new InternalServerErrorCommand(request, response);
             }
         } catch (ServiceException ex) {
             return new InternalServerErrorCommand(request, response);

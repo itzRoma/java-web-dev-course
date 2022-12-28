@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=utf-8" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="com.itzroma.kpi.semester5.courseplatform.model.Role" %>
 
 <t:page title="CoursePlatform | Sign-in">
     <div class="container">
@@ -24,6 +25,25 @@
                         <form class="d-flex flex-column"
                               action="${pageContext.request.contextPath}/auth/sign-in?redirect-to=${requestScope.redirectTo}"
                               method="post">
+
+                            <ul class="nav nav-pills nav-justified mb-3 gap-2">
+                                <li class="nav-item">
+                                    <input type="radio" class="btn-check" name="role" id="${Role.STUDENT}"
+                                           autocomplete="off" value="${Role.STUDENT}" checked>
+                                    <label class="btn btn-outline-primary w-100" for="${Role.STUDENT}">
+                                            ${Role.STUDENT}
+                                    </label>
+                                </li>
+                                <li class="nav-item">
+                                    <input type="radio" class="btn-check" name="role" id="${Role.TEACHER}"
+                                           autocomplete="off" value="${Role.TEACHER}">
+                                    <label class="btn btn-outline-primary w-100" for="${Role.TEACHER}">
+                                            ${Role.TEACHER}
+                                    </label>
+                                </li>
+                            </ul>
+
+                            <input type="hidden" name="is-admin" value="${requestScope.isAdmin}">
 
                             <div class="input-group has-validation mb-3">
                                 <div class="form-floating <c:if test="${requestScope.emailError != null}">is-invalid</c:if>">

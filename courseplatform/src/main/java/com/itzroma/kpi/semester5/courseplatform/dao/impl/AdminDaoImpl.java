@@ -4,12 +4,12 @@ import com.itzroma.kpi.semester5.courseplatform.dao.AdminDao;
 import com.itzroma.kpi.semester5.courseplatform.db.DBUtils;
 import com.itzroma.kpi.semester5.courseplatform.exception.dao.UnsuccessfulOperationException;
 import com.itzroma.kpi.semester5.courseplatform.model.Admin;
+import com.itzroma.kpi.semester5.courseplatform.model.Role;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,12 +22,18 @@ public class AdminDaoImpl extends UserDaoImpl<Admin> implements AdminDao {
 
     private static final String FIND_ADMIN_BY_USER_ID_QUERY = "SELECT * FROM admin WHERE user_id = ?";
 
+    private static final String FIND_MANY_ADMINS = "SELECT * FROM admin ORDER BY id DESC LIMIT ?";
+
+    private static final String FIND_ALL_ADMINS = "SELECT * FROM admin";
+
     @Override
     public Admin create(Admin entity) throws UnsuccessfulOperationException {
         Admin created = super.create(entity);
 
         ResultSet rs = null;
-        try (PreparedStatement ps = connection.prepareStatement(CREATE_ADMIN_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                CREATE_ADMIN_QUERY, Statement.RETURN_GENERATED_KEYS
+        )) {
             int i = 0;
             ps.setLong(++i, entity.getUserId());
 
@@ -47,28 +53,66 @@ public class AdminDaoImpl extends UserDaoImpl<Admin> implements AdminDao {
     }
 
     @Override
-    public Optional<Admin> findById(Long aLong) throws UnsuccessfulOperationException {
-        return Optional.empty();
-    }
-
-    @Override
     public List<Admin> findMany(int quantity) throws UnsuccessfulOperationException {
-        return Collections.emptyList();
+        List<Admin> admins = super.findManyUsers(quantity, Role.ADMIN);
+
+        ResultSet rs = null;
+        try (PreparedStatement ps = connection.prepareStatement(FIND_MANY_ADMINS)) {
+            int i = 0;
+            ps.setInt(++i, quantity);
+
+            rs = ps.executeQuery();
+            int j = 0;
+            while (rs.next()) {
+                i = 0;
+                admins.get(j).setAdminId(rs.getLong(++i));
+                admins.get(j).setUserId(rs.getLong(++i));
+                j++;
+            }
+            return admins;
+        } catch (SQLException ex) {
+            throw new UnsuccessfulOperationException(ex);
+        } finally {
+            DBUtils.close(rs);
+        }
     }
 
     @Override
     public List<Admin> findAll() throws UnsuccessfulOperationException {
-        return Collections.emptyList();
+        List<Admin> admins = super.findAllUsers(Role.ADMIN);
+
+        ResultSet rs = null;
+        try (PreparedStatement ps = connection.prepareStatement(FIND_ALL_ADMINS)) {
+            rs = ps.executeQuery();
+            int i;
+            int j = 0;
+            while (rs.next()) {
+                i = 0;
+                admins.get(j).setAdminId(rs.getLong(++i));
+                admins.get(j).setUserId(rs.getLong(++i));
+                j++;
+            }
+            return admins;
+        } catch (SQLException ex) {
+            throw new UnsuccessfulOperationException(ex);
+        } finally {
+            DBUtils.close(rs);
+        }
     }
 
     @Override
-    public Admin update(Admin target, Admin source) throws UnsuccessfulOperationException {
-        return null;
+    public boolean existsByEmail(String email) throws UnsuccessfulOperationException {
+        return existsByEmail(email, Role.ADMIN);
+    }
+
+    @Override
+    public boolean existsByEmailAndPassword(String email, String password) throws UnsuccessfulOperationException {
+        return existsByEmailAndPassword(email, password, Role.ADMIN);
     }
 
     @Override
     public Optional<Admin> findByEmail(String email) throws UnsuccessfulOperationException {
-        Optional<Admin> admin = super.findByEmail(email);
+        Optional<Admin> admin = super.findUserByEmail(email, Role.ADMIN);
         if (admin.isEmpty()) return Optional.empty();
 
         ResultSet rs = null;

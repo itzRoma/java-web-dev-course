@@ -13,7 +13,7 @@ public interface UserDao<T extends User> extends CrudDao<Long, T> {
 
     Optional<T> findByEmail(String email) throws UnsuccessfulOperationException;
 
-    Role getRoleByEmail(String email) throws UnsuccessfulOperationException;
+    Role getUserRoleByEmail(String email) throws UnsuccessfulOperationException;
 
     T updateByUserId(Long targetId, User source) throws UnsuccessfulOperationException;
 

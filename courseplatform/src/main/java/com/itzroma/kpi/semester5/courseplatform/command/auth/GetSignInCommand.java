@@ -16,6 +16,7 @@ public class GetSignInCommand extends Command {
     @Override
     public View execute() {
         request.setAttribute("redirectTo", request.getParameter("redirect-to"));
+        request.setAttribute("isAdmin", request.getParameter("is-admin"));
         return new View(JspPage.SIGN_IN, DispatchType.FORWARD);
     }
 }
