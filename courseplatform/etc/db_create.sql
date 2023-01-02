@@ -7,6 +7,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema courseplatform
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `courseplatform` ;
 
 -- -----------------------------------------------------
 -- Schema courseplatform
@@ -17,6 +18,8 @@ USE `courseplatform` ;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`user`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`user` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`user` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `first_name` VARCHAR(45) NOT NULL,
@@ -33,6 +36,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`student`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`student` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`student` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `blocked` TINYINT NOT NULL,
@@ -50,6 +55,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`admin`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`admin` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`admin` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
@@ -66,6 +73,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`teacher`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`teacher` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`teacher` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
@@ -82,14 +91,16 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`course`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`course` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`course` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(100) NOT NULL,
   `description` VARCHAR(1000) NULL,
-  `duration` INT NULL,
+  `duration` INT NOT NULL,
   `min_grade` INT NULL,
   `max_grade` INT NULL,
-  `starting_date` DATETIME NULL,
+  `starting_date` DATETIME NOT NULL,
   `status` ENUM('CREATED', 'MODIFYING', 'ENROLLING', 'IN_PROGRESS', 'FINISHED') NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
@@ -98,6 +109,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`theme`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`theme` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`theme` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
@@ -109,6 +122,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`courses_themes`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`courses_themes` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`courses_themes` (
   `course_id` INT NOT NULL,
   `theme_id` INT NOT NULL,
@@ -131,6 +146,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`unit`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`unit` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`unit` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(45) NOT NULL,
@@ -148,6 +165,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`module`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`module` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`module` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(45) NOT NULL,
@@ -165,6 +184,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`material`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`material` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`material` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(45) NOT NULL,
@@ -183,6 +204,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`video_lecture`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`video_lecture` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`video_lecture` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `video_url` VARCHAR(300) NOT NULL,
@@ -200,6 +223,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`text_lecture`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`text_lecture` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`text_lecture` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `file_url` VARCHAR(300) NULL,
@@ -217,6 +242,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`test`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`test` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`test` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `max_grade` INT NOT NULL,
@@ -234,6 +261,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`assignment`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`assignment` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`assignment` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `question` VARCHAR(1000) NOT NULL,
@@ -252,6 +281,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`question`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`question` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`question` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `question` VARCHAR(100) NOT NULL,
@@ -270,6 +301,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `courseplatform`.`answer`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `courseplatform`.`answer` ;
+
 CREATE TABLE IF NOT EXISTS `courseplatform`.`answer` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `option` VARCHAR(45) NOT NULL,

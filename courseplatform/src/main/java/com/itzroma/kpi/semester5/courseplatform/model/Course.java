@@ -22,4 +22,11 @@ public class Course implements Entity<Long> {
     private CourseStatus status;
     private Set<Theme> themes;
     private Set<Unit> units;
+
+    public Course(String title, String description, Integer duration, LocalDateTime startingDate) {
+        this.title = title;
+        this.description = description;
+        this.duration = duration;
+        this.startingDate = startingDate;
+    }
 }

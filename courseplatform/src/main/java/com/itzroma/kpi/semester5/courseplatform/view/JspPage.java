@@ -38,13 +38,22 @@ public record JspPage(String jspPath, String url) {
     public static final JspPage AD_TEACHERS_NEW = new JspPage(
             VIEW_DIR.concat("/admin/teacher/new.jsp"), CONTEXT_PATH.concat("/admin-dashboard/teachers/new")
     );
+    public static final JspPage AD_COURSES = new JspPage(
+            VIEW_DIR.concat("/admin/course/all.jsp"), CONTEXT_PATH.concat("/admin-dashboard/courses")
+    );
+    public static final JspPage AD_COURSES_NEW = new JspPage(
+            VIEW_DIR.concat("/admin/course/new.jsp"), CONTEXT_PATH.concat("/admin-dashboard/courses/new")
+    );
 
     static {
         DEFAULTS = Set.of(
                 INDEX,
                 SIGN_IN, SIGN_UP,
                 PROFILE, UPDATE_PROFILE,
-                ADMIN_DASHBOARD, AD_STUDENTS, AD_TEACHERS, AD_TEACHERS_NEW
+                ADMIN_DASHBOARD,
+                AD_STUDENTS,
+                AD_TEACHERS, AD_TEACHERS_NEW,
+                AD_COURSES, AD_COURSES_NEW
         );
     }
 

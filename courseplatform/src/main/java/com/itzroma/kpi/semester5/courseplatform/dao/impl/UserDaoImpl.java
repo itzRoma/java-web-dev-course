@@ -53,7 +53,7 @@ public abstract class UserDaoImpl<T extends User> extends CrudDaoImpl<Long, T> i
             ps.setString(++i, entity.getEmail());
             ps.setString(++i, entity.getPassword());
             ps.setString(++i, entity.getRole().name());
-            ps.setDate(++i, Date.valueOf(entity.getRegistrationDate().toLocalDate()));
+            ps.setTimestamp(++i, Timestamp.valueOf(entity.getRegistrationDate()));
 
             if (ps.executeUpdate() > 0) {
                 rs = ps.getGeneratedKeys();

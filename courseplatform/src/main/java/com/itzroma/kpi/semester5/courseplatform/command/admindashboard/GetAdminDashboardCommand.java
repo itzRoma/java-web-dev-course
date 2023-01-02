@@ -2,8 +2,10 @@ package com.itzroma.kpi.semester5.courseplatform.command.admindashboard;
 
 import com.itzroma.kpi.semester5.courseplatform.command.Command;
 import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceException;
+import com.itzroma.kpi.semester5.courseplatform.service.CourseService;
 import com.itzroma.kpi.semester5.courseplatform.service.StudentService;
 import com.itzroma.kpi.semester5.courseplatform.service.TeacherService;
+import com.itzroma.kpi.semester5.courseplatform.service.impl.CourseServiceImpl;
 import com.itzroma.kpi.semester5.courseplatform.service.impl.StudentServiceImpl;
 import com.itzroma.kpi.semester5.courseplatform.service.impl.TeacherServiceImpl;
 import com.itzroma.kpi.semester5.courseplatform.view.DispatchType;
@@ -28,6 +30,9 @@ public class GetAdminDashboardCommand extends Command {
 
             TeacherService teacherService = new TeacherServiceImpl();
             request.setAttribute("teachers", teacherService.findMany(DEFAULT_QUANTITY));
+
+            CourseService courseService = new CourseServiceImpl();
+            request.setAttribute("courses", courseService.findMany(DEFAULT_QUANTITY));
         } catch (ServiceException ex) {
             request.setAttribute("error", ex.getMessage());
         }

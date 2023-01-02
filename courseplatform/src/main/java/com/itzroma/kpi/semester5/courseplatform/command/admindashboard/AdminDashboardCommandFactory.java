@@ -41,6 +41,12 @@ public class AdminDashboardCommandFactory extends CommandFactory {
             case "/teachers/new" -> request.getMethod().equals("GET")
                     ? new GetTeacherCreationCommand(request, response)
                     : new PostTeacherCreationCommand(request, response);
+            case "/courses" -> request.getMethod().equals("GET")
+                    ? new GetCoursesCommand(request, response)
+                    : new InternalServerErrorCommand(request, response);
+            case "/courses/new" -> request.getMethod().equals("GET")
+                    ? new GetCourseCreationCommand(request, response)
+                    : new PostCourseCreationCommand(request, response);
             default -> {
                 if (action.matches(STUDENT_VIEW_REGEX)) {
                     Matcher matcher = Pattern.compile(STUDENT_VIEW_REGEX).matcher(action);

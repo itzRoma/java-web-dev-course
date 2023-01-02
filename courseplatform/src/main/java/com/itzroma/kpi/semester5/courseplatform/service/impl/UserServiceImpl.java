@@ -48,7 +48,7 @@ public abstract class UserServiceImpl<T extends User> implements UserService<Lon
             T user = dao.create(entity);
             transaction.commit();
             log.info(
-                    () -> "New %s with user id %s registered successfully"
+                    () -> "New %s with user id %d registered successfully"
                             .formatted(entityClassName, user.getUserId())
             );
             return user;
