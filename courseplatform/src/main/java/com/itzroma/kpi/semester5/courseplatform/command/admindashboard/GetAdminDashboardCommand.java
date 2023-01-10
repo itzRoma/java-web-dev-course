@@ -5,9 +5,11 @@ import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceExcepti
 import com.itzroma.kpi.semester5.courseplatform.service.CourseService;
 import com.itzroma.kpi.semester5.courseplatform.service.StudentService;
 import com.itzroma.kpi.semester5.courseplatform.service.TeacherService;
+import com.itzroma.kpi.semester5.courseplatform.service.ThemeService;
 import com.itzroma.kpi.semester5.courseplatform.service.impl.CourseServiceImpl;
 import com.itzroma.kpi.semester5.courseplatform.service.impl.StudentServiceImpl;
 import com.itzroma.kpi.semester5.courseplatform.service.impl.TeacherServiceImpl;
+import com.itzroma.kpi.semester5.courseplatform.service.impl.ThemeServiceImpl;
 import com.itzroma.kpi.semester5.courseplatform.view.DispatchType;
 import com.itzroma.kpi.semester5.courseplatform.view.JspPage;
 import com.itzroma.kpi.semester5.courseplatform.view.View;
@@ -33,6 +35,9 @@ public class GetAdminDashboardCommand extends Command {
 
             CourseService courseService = new CourseServiceImpl();
             request.setAttribute("courses", courseService.findMany(DEFAULT_QUANTITY));
+
+            ThemeService themeService = new ThemeServiceImpl();
+            request.setAttribute("themes", themeService.findMany(DEFAULT_QUANTITY));
         } catch (ServiceException ex) {
             request.setAttribute("error", ex.getMessage());
         }

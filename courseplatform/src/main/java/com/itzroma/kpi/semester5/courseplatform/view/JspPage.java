@@ -48,6 +48,16 @@ public record JspPage(String jspPath, String url) {
             VIEW_DIR.concat("/admin/course/one.jsp"), CONTEXT_PATH.concat("/admin-dashboard/courses/%d")
     );
 
+    public static final JspPage AD_THEMES = new JspPage(
+            VIEW_DIR.concat("/admin/theme/all.jsp"), CONTEXT_PATH.concat("/admin-dashboard/themes")
+    );
+    public static final JspPage AD_THEMES_NEW = new JspPage(
+            VIEW_DIR.concat("/admin/theme/new.jsp"), CONTEXT_PATH.concat("/admin-dashboard/themes/new")
+    );
+    public static final JspPage AD_THEME_UPDATE = new JspPage(
+            VIEW_DIR.concat("/admin/theme/update.jsp"), CONTEXT_PATH.concat("/admin-dashboard/themes/%s/update")
+    );
+
     static {
         DEFAULTS = Set.of(
                 INDEX,
@@ -56,7 +66,8 @@ public record JspPage(String jspPath, String url) {
                 ADMIN_DASHBOARD,
                 AD_STUDENTS,
                 AD_TEACHERS, AD_TEACHERS_NEW,
-                AD_COURSES, AD_COURSES_NEW, AD_COURSE
+                AD_COURSES, AD_COURSES_NEW, AD_COURSE,
+                AD_THEMES, AD_THEMES_NEW, AD_THEME_UPDATE
         );
     }
 

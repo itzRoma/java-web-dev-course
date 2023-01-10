@@ -3,6 +3,7 @@ package com.itzroma.kpi.semester5.courseplatform.model;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -20,13 +21,14 @@ public class Course implements Entity<Long> {
     private Integer maxGrade;
     private LocalDateTime startingDate;
     private CourseStatus status;
-    private Set<Theme> themes;
+    private List<Theme> themes;
     private Set<Unit> units;
 
-    public Course(String title, String description, Integer duration, LocalDateTime startingDate) {
+    public Course(String title, String description, Integer duration, LocalDateTime startingDate, List<Theme> themes) {
         this.title = title;
         this.description = description;
         this.duration = duration;
         this.startingDate = startingDate;
+        this.themes = themes;
     }
 }

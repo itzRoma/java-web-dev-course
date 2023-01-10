@@ -17,6 +17,7 @@ public class AdminDashboardCommandFactory extends CommandFactory {
 
     private static final String USER_EMAIL_EXTRACTION_REGEX = "/(students|teachers)/([\\w-.]+@\\w+(\\.\\w+)?)";
     private static final String COURSE_ID_EXTRACTION_REGEX = "/courses/(\\d+)";
+    private static final String THEME_NAME_EXTRACTION_REGEX = "/themes/([\\w%]+)";
 
     private static final String STUDENT_VIEW_REGEX = "^/students/([\\w-.]+@\\w+(\\.\\w+)?)$";
     private static final String STUDENT_TOGGLE_BLOCK_REGEX = "^/students/([\\w-.]+@\\w+(\\.\\w+)?)/toggle-block$";
@@ -25,6 +26,9 @@ public class AdminDashboardCommandFactory extends CommandFactory {
 
     private static final String COURSE_VIEW_REGEX = "^/courses/(\\d+)$";
     private static final String COURSE_DELETE_REGEX = "^/courses/(\\d+)/delete$";
+
+    private static final String THEME_UPDATE_REGEX = "^/themes/([\\w%]+)/update$";
+    private static final String THEME_DELETE_REGEX = "^/themes/([\\w%]+)/delete$";
 
     public AdminDashboardCommandFactory(HttpServletRequest request, HttpServletResponse response) {
         super(ADMIN_DASHBOARD_COMMAND_REGEX, request, response);
@@ -53,6 +57,12 @@ public class AdminDashboardCommandFactory extends CommandFactory {
             case "/courses/new" -> request.getMethod().equals("GET")
                     ? new GetCourseCreationCommand(request, response)
                     : new PostCourseCreationCommand(request, response);
+            case "/themes" -> request.getMethod().equals("GET")
+                    ? new GetThemesCommand(request, response)
+                    : new InternalServerErrorCommand(request, response);
+            case "/themes/new" -> request.getMethod().equals("GET")
+                    ? new GetThemeCreationCommand(request, response)
+                    : new PostThemeCreationCommand(request, response);
             default -> {
                 if (action.matches(STUDENT_VIEW_REGEX)) {
                     yield viewStudent();
@@ -68,6 +78,12 @@ public class AdminDashboardCommandFactory extends CommandFactory {
                 }
                 if (action.matches(COURSE_DELETE_REGEX)) {
                     yield deleteCourse();
+                }
+                if (action.matches(THEME_UPDATE_REGEX)) {
+                    yield updateTheme();
+                }
+                if (action.matches(THEME_DELETE_REGEX)) {
+                    yield deleteTheme();
                 }
                 yield invalidCommand();
             }
@@ -125,5 +141,28 @@ public class AdminDashboardCommandFactory extends CommandFactory {
         return request.getMethod().equals("GET")
                 ? new NotFoundCommand(request, response)
                 : new PostCourseDeleteCommand(request, response);
+    }
+
+    private Command updateTheme() {
+        extractThemeName();
+        return request.getMethod().equals("GET")
+                ? new GetThemeUpdatingCommand(request, response)
+                : new PostThemeUpdatingCommand(request, response);
+    }
+
+    private void extractThemeName() {
+        Matcher matcher = Pattern.compile(THEME_NAME_EXTRACTION_REGEX).matcher(Objects.requireNonNull(action));
+        if (matcher.find()) {
+            request.setAttribute("name", matcher.group(1));
+        } else {
+            throw new EntityNotFoundException("Theme not found");
+        }
+    }
+
+    private Command deleteTheme() {
+        extractThemeName();
+        return request.getMethod().equals("GET")
+                ? new NotFoundCommand(request, response)
+                : new PostThemeDeleteCommand(request, response);
     }
 }

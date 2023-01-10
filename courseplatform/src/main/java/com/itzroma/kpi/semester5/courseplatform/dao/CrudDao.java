@@ -6,7 +6,8 @@ import com.itzroma.kpi.semester5.courseplatform.model.Entity;
 import java.util.List;
 import java.util.Optional;
 
-public interface CrudDao<ID, T extends Entity<ID>> extends AbstractDao<ID, T> {
+
+public interface CrudDao<ID, T extends Entity<ID>> extends AbstractDao {
     // C - create
     T create(T entity) throws UnsuccessfulOperationException;
 

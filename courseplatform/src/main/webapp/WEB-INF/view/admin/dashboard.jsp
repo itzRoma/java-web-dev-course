@@ -62,42 +62,56 @@
                 </table>
             </div>
         </div>
-        <div class="d-flex justify-content-center align-items-center">
-            <div class="row w-75">
-                <div class="col">
-                    <table class="table table-sm table-hover caption-top">
-                        <caption>
-                            Recently created courses,
-                            <a href="${pageContext.request.contextPath}/admin-dashboard/courses"> show all</a>
-                        </caption>
-                        <thead>
+        <div class="row mb-5">
+            <div class="col me-5">
+                <table class="table table-sm table-hover caption-top">
+                    <caption>
+                        Recently created courses,
+                        <a href="${pageContext.request.contextPath}/admin-dashboard/courses"> show all</a>
+                    </caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">Course ID</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Starting date</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                    <c:forEach items="${requestScope.courses}" var="course">
                         <tr>
-                            <th scope="col">Course ID</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Duration</th>
-                            <th scope="col">Min grade</th>
-                            <th scope="col">Max grade</th>
-                            <th scope="col">Starting date</th>
-                            <th scope="col">Status</th>
+                            <th scope="row">${course.id}</th>
+                            <td>${course.title.length() > 20 ? course.title.substring(0, 20).concat("...") : course.title}</td>
+                            <td>${course.startingDate}</td>
+                            <td>${course.status}</td>
                         </tr>
-                        </thead>
-                        <tbody class="table-group-divider">
-                        <c:forEach items="${requestScope.courses}" var="course">
-                            <tr>
-                                <th scope="row">${course.id}</th>
-                                <td>${course.title.length() > 20 ? course.title.substring(0, 20).concat("...") : course.title}</td>
-                                <td>${course.description.length() > 20 ? course.description.substring(0, 20).concat("...") : course.description}</td>
-                                <td>${course.duration}</td>
-                                <td>${course.minGrade}</td>
-                                <td>${course.maxGrade}</td>
-                                <td>${course.startingDate}</td>
-                                <td>${course.status}</td>
-                            </tr>
-                        </c:forEach>
-                        </tbody>
-                    </table>
-                </div>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col">
+                <table class="table table-sm table-hover caption-top align-middle">
+                    <caption>
+                        Recently created themes,
+                        <a href="${pageContext.request.contextPath}/admin-dashboard/themes"> show all</a>
+                    </caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">Theme ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">In use by</th>
+                    </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                    <c:forEach items="${requestScope.themes}" var="theme">
+                        <tr>
+                            <th scope="row">${theme.id}</th>
+                            <td>${theme.name}</td>
+                            <td>${theme.numberOfUses} course(s)</td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

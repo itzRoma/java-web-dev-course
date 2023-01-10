@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 @AllArgsConstructor
-public abstract class CrudDaoImpl<ID, T extends Entity<ID>> extends AbstractDaoImpl<ID, T> implements CrudDao<ID, T> {
+public abstract class CrudDaoImpl<ID, T extends Entity<ID>> extends AbstractDaoImpl implements CrudDao<ID, T> {
 
     private static final String DELETE_QUERY = "DELETE FROM %s WHERE id = ?";
 

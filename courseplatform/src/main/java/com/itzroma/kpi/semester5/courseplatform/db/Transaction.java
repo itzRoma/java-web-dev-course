@@ -1,7 +1,6 @@
 package com.itzroma.kpi.semester5.courseplatform.db;
 
 import com.itzroma.kpi.semester5.courseplatform.dao.AbstractDao;
-import com.itzroma.kpi.semester5.courseplatform.model.Entity;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,8 +16,7 @@ public class Transaction {
         connection = MySQLConnectionPool.INSTANCE.getConnection();
     }
 
-    @SafeVarargs
-    public final <ID, T extends Entity<ID>> void openTransaction(AbstractDao<ID, T> dao, AbstractDao<ID, T>... daos) {
+    public final void openTransaction(AbstractDao dao, AbstractDao... daos) {
         try {
             connection.setAutoCommit(false);
         } catch (SQLException ex) {

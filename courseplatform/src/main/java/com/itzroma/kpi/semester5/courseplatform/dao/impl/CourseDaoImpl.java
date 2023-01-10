@@ -5,6 +5,7 @@ import com.itzroma.kpi.semester5.courseplatform.db.DBUtils;
 import com.itzroma.kpi.semester5.courseplatform.exception.dao.UnsuccessfulOperationException;
 import com.itzroma.kpi.semester5.courseplatform.model.Course;
 import com.itzroma.kpi.semester5.courseplatform.model.CourseStatus;
+import com.itzroma.kpi.semester5.courseplatform.model.Theme;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public class CourseDaoImpl extends CrudDaoImpl<Long, Course> implements CourseDa
 
     private static final String FIND_ALL_COURSES = "SELECT * FROM course";
 
+    private static final String ASSIGN_THEMES = "INSERT INTO courses_themes (course_id, theme_id) VALUES (?, ?)";
+
     @Override
     public Course create(Course entity) throws UnsuccessfulOperationException {
         ResultSet rs = null;
@@ -38,7 +41,9 @@ public class CourseDaoImpl extends CrudDaoImpl<Long, Course> implements CourseDa
             if (ps.executeUpdate() > 0) {
                 rs = ps.getGeneratedKeys();
                 if (rs.next()) {
-                    entity.setId(rs.getLong(1));
+                    long id = rs.getLong(1);
+                    entity.setId(id);
+                    assignThemes(id, entity.getThemes());
                     return entity;
                 }
             }
@@ -128,5 +133,19 @@ public class CourseDaoImpl extends CrudDaoImpl<Long, Course> implements CourseDa
     @Override
     public Course update(Course target, Course source) throws UnsuccessfulOperationException {
         return null;
+    }
+
+    private void assignThemes(Long courseId, List<Theme> themes) throws UnsuccessfulOperationException {
+        try (PreparedStatement ps = connection.prepareStatement(ASSIGN_THEMES)) {
+            for (Theme theme : themes) {
+                int i = 0;
+                ps.setLong(++i, courseId);
+                ps.setLong(++i, theme.getId());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        } catch (SQLException ex) {
+            throw new UnsuccessfulOperationException(ex);
+        }
     }
 }

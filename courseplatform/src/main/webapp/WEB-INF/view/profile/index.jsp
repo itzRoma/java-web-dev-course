@@ -13,12 +13,20 @@
                                  alt="Generic placeholder image"
                                  class="img-fluid img-thumbnail mt-4 mb-2"
                                  style="width: 150px; z-index: 1">
-                            <c:if test="${requestScope.user.email.equals(sessionScope.email)}">
-                                <a href="${pageContext.request.contextPath}/profile/update"
-                                   class="btn btn-outline-dark"
-                                   data-mdb-ripple-color="dark"
-                                   style="z-index: 1;">Update profile</a>
-                            </c:if>
+                            <c:choose>
+                                <c:when test="${requestScope.user.email.equals(sessionScope.email)}">
+                                    <a href="${pageContext.request.contextPath}/profile/update"
+                                       class="btn btn-outline-dark"
+                                       data-mdb-ripple-color="dark"
+                                       style="z-index: 1;">Update profile</a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="${pageContext.request.contextPath}/admin-dashboard/${requestScope.user.role.name().toLowerCase()}s"
+                                       class="btn btn-outline-dark"
+                                       data-mdb-ripple-color="dark"
+                                       style="z-index: 1;">Back</a>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                         <div class="ms-3" style="margin-top: 130px;">
                             <h5>${requestScope.user.firstName} ${requestScope.user.lastName}</h5>

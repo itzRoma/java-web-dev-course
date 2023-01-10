@@ -1,7 +1,9 @@
 package com.itzroma.kpi.semester5.courseplatform.service.impl;
 
 import com.itzroma.kpi.semester5.courseplatform.dao.CourseDao;
+import com.itzroma.kpi.semester5.courseplatform.dao.ThemeDao;
 import com.itzroma.kpi.semester5.courseplatform.dao.impl.CourseDaoImpl;
+import com.itzroma.kpi.semester5.courseplatform.dao.impl.ThemeDaoImpl;
 import com.itzroma.kpi.semester5.courseplatform.db.Transaction;
 import com.itzroma.kpi.semester5.courseplatform.exception.dao.UnsuccessfulOperationException;
 import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityNotFoundException;
@@ -37,11 +39,13 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<Course> findMany(int quantity) throws ServiceException {
-        CourseDao dao = new CourseDaoImpl();
+        CourseDao courseDao = new CourseDaoImpl();
+        ThemeDao themeDao = new ThemeDaoImpl();
         Transaction transaction = new Transaction();
-        transaction.openTransaction(dao);
+        transaction.openTransaction(courseDao, themeDao);
         try {
-            List<Course> courses = dao.findMany(quantity);
+            List<Course> courses = courseDao.findMany(quantity);
+            courses.forEach(course -> course.setThemes(themeDao.getByCourseId(course.getId())));
             transaction.commit();
             log.info(
                     () -> "%d out of %d requested courses found successfully"
@@ -59,11 +63,13 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<Course> findAll() throws ServiceException {
-        CourseDao dao = new CourseDaoImpl();
+        CourseDao courseDao = new CourseDaoImpl();
+        ThemeDao themeDao = new ThemeDaoImpl();
         Transaction transaction = new Transaction();
-        transaction.openTransaction(dao);
+        transaction.openTransaction(courseDao, themeDao);
         try {
-            List<Course> courses = dao.findAll();
+            List<Course> courses = courseDao.findAll();
+            courses.forEach(course -> course.setThemes(themeDao.getByCourseId(course.getId())));
             transaction.commit();
             log.info(() -> "All (%d) courses found successfully".formatted(courses.size()));
             return courses;
@@ -78,17 +84,20 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course findById(Long id) throws EntityNotFoundException, ServiceException {
-        CourseDao dao = new CourseDaoImpl();
+        CourseDao courseDao = new CourseDaoImpl();
+        ThemeDao themeDao = new ThemeDaoImpl();
         Transaction transaction = new Transaction();
-        transaction.openTransaction(dao);
+        transaction.openTransaction(courseDao, themeDao);
         try {
-            Optional<Course> course = dao.findById(id);
-            transaction.commit();
+            Optional<Course> course = courseDao.findById(id);
             if (course.isEmpty()) {
+                transaction.commit();
                 String message = "Course with id %d not found".formatted(id);
                 log.warning(message);
                 throw new EntityNotFoundException(message);
             }
+            course.get().setThemes(themeDao.getByCourseId(course.get().getId()));
+            transaction.commit();
             log.info(() -> "Course with id %d found successfully".formatted(id));
             return course.get();
         } catch (UnsuccessfulOperationException ex) {

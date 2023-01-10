@@ -38,6 +38,12 @@
                             <label for="floatingDescription">Description</label>
                         </div>
 
+                        <select class="form-select mb-3" name="themes" multiple aria-label="multiple select example">
+                            <c:forEach items="${requestScope.themes}" var="theme">
+                                <option value="${theme.name}">${theme.name}</option>
+                            </c:forEach>
+                        </select>
+
                         <div class="form-floating mb-3">
                             <input type="number" pattern="^[1-9][0-9]*$" name="duration"
                                    class="form-control"
