@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <t:page title="CoursePlatform | Courses">
-    <div class="container d-flex flex-column align-items-end">
+    <div class="d-flex flex-column align-items-end">
         <form action="${pageContext.request.contextPath}/admin-dashboard/courses/new">
             <button type="submit" class="btn btn-primary">Create new course</button>
         </form>
@@ -19,6 +19,7 @@
                 <th scope="col">Max grade</th>
                 <th scope="col">Starting date</th>
                 <th scope="col">Status</th>
+                <th scope="col">Actions</th>
             </tr>
             </thead>
             <tbody class="table-group-divider">
@@ -32,6 +33,16 @@
                     <td>${course.maxGrade}</td>
                     <td>${course.startingDate}</td>
                     <td>${course.status}</td>
+                    <td class="d-flex">
+                        <a href="${pageContext.request.contextPath}/admin-dashboard/courses/${course.id}"
+                           class="btn btn-link">
+                            View
+                        </a>
+                        <form action="${pageContext.request.contextPath}/admin-dashboard/courses/${course.id}/delete"
+                              method="post">
+                            <button type="submit" class="btn btn-link">X</button>
+                        </form>
+                    </td>
                 </tr>
             </c:forEach>
             </tbody>

@@ -11,7 +11,6 @@ import com.itzroma.kpi.semester5.courseplatform.view.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 public class PostToggleBlockCommand extends Command {
     public PostToggleBlockCommand(HttpServletRequest request, HttpServletResponse response) {
@@ -21,12 +20,13 @@ public class PostToggleBlockCommand extends Command {
     @Override
     public View execute() {
         DispatchType dt;
+        StudentService service = new StudentServiceImpl();
         try {
-            StudentService service = new StudentServiceImpl();
             Student student = service.findByEmail(String.valueOf(request.getAttribute("email")));
             service.toggleBlock(student);
             dt = DispatchType.REDIRECT;
         } catch (ServiceException ex) {
+            request.setAttribute("students", service.findAll());
             request.setAttribute("error", ex.getMessage());
             dt = DispatchType.FORWARD;
         }

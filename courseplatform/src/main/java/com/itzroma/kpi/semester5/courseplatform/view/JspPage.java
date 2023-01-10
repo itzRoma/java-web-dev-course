@@ -44,6 +44,9 @@ public record JspPage(String jspPath, String url) {
     public static final JspPage AD_COURSES_NEW = new JspPage(
             VIEW_DIR.concat("/admin/course/new.jsp"), CONTEXT_PATH.concat("/admin-dashboard/courses/new")
     );
+    public static final JspPage AD_COURSE = new JspPage(
+            VIEW_DIR.concat("/admin/course/one.jsp"), CONTEXT_PATH.concat("/admin-dashboard/courses/%d")
+    );
 
     static {
         DEFAULTS = Set.of(
@@ -53,7 +56,7 @@ public record JspPage(String jspPath, String url) {
                 ADMIN_DASHBOARD,
                 AD_STUDENTS,
                 AD_TEACHERS, AD_TEACHERS_NEW,
-                AD_COURSES, AD_COURSES_NEW
+                AD_COURSES, AD_COURSES_NEW, AD_COURSE
         );
     }
 

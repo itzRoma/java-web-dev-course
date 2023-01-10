@@ -15,10 +15,16 @@ import java.util.regex.Pattern;
 public class AdminDashboardCommandFactory extends CommandFactory {
     private static final String ADMIN_DASHBOARD_COMMAND_REGEX = "(?<=/admin-dashboard).*(?=\\?)|(?<=/admin-dashboard).*(?=$)";
 
+    private static final String USER_EMAIL_EXTRACTION_REGEX = "/(students|teachers)/([\\w-.]+@\\w+(\\.\\w+)?)";
+    private static final String COURSE_ID_EXTRACTION_REGEX = "/courses/(\\d+)";
+
     private static final String STUDENT_VIEW_REGEX = "^/students/([\\w-.]+@\\w+(\\.\\w+)?)$";
     private static final String STUDENT_TOGGLE_BLOCK_REGEX = "^/students/([\\w-.]+@\\w+(\\.\\w+)?)/toggle-block$";
 
     private static final String TEACHER_VIEW_REGEX = "^/teachers/([\\w-.]+@\\w+(\\.\\w+)?)$";
+
+    private static final String COURSE_VIEW_REGEX = "^/courses/(\\d+)$";
+    private static final String COURSE_DELETE_REGEX = "^/courses/(\\d+)/delete$";
 
     public AdminDashboardCommandFactory(HttpServletRequest request, HttpServletResponse response) {
         super(ADMIN_DASHBOARD_COMMAND_REGEX, request, response);
@@ -57,38 +63,67 @@ public class AdminDashboardCommandFactory extends CommandFactory {
                 if (action.matches(TEACHER_VIEW_REGEX)) {
                     yield viewTeacher();
                 }
+                if (action.matches(COURSE_VIEW_REGEX)) {
+                    yield viewCourse();
+                }
+                if (action.matches(COURSE_DELETE_REGEX)) {
+                    yield deleteCourse();
+                }
                 yield invalidCommand();
             }
         };
     }
 
     private Command viewStudent() {
-        extractEmail(STUDENT_VIEW_REGEX, "Student not found");
+        extractEmail("Student not found");
         return request.getMethod().equals("GET")
                 ? new GetStudentCommand(request, response)
                 : new InternalServerErrorCommand(request, response);
     }
 
-    private void extractEmail(String regex, String notFoundMessage) {
-        Matcher matcher = Pattern.compile(regex).matcher(Objects.requireNonNull(action));
+    private void extractEmail(String notFoundMessage) {
+        Matcher matcher = Pattern.compile(USER_EMAIL_EXTRACTION_REGEX).matcher(Objects.requireNonNull(action));
         if (matcher.find()) {
-            request.setAttribute("email", matcher.group(1));
+            request.setAttribute("email", matcher.group(2));
         } else {
             throw new EntityNotFoundException(notFoundMessage);
         }
     }
 
     private Command toggleBlockForStudent() {
-        extractEmail(STUDENT_TOGGLE_BLOCK_REGEX, "Student not found");
+        extractEmail("Student not found");
         return request.getMethod().equals("GET")
                 ? new NotFoundCommand(request, response)
                 : new PostToggleBlockCommand(request, response);
     }
 
     private Command viewTeacher() {
-        extractEmail(TEACHER_VIEW_REGEX, "Teacher not found");
+        extractEmail("Teacher not found");
         return request.getMethod().equals("GET")
                 ? new GetTeacherCommand(request, response)
                 : new InternalServerErrorCommand(request, response);
+    }
+
+    private Command viewCourse() {
+        extractCourseId();
+        return request.getMethod().equals("GET")
+                ? new GetCourseCommand(request, response)
+                : new InternalServerErrorCommand(request, response);
+    }
+
+    private void extractCourseId() {
+        Matcher matcher = Pattern.compile(COURSE_ID_EXTRACTION_REGEX).matcher(Objects.requireNonNull(action));
+        if (matcher.find()) {
+            request.setAttribute("id", Long.parseLong(matcher.group(1)));
+        } else {
+            throw new EntityNotFoundException("Course not found");
+        }
+    }
+
+    private Command deleteCourse() {
+        extractCourseId();
+        return request.getMethod().equals("GET")
+                ? new NotFoundCommand(request, response)
+                : new PostCourseDeleteCommand(request, response);
     }
 }

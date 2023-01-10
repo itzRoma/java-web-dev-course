@@ -118,6 +118,7 @@ public abstract class UserServiceImpl<T extends User> implements UserService<Lon
                 log.warning(message);
                 throw new EntityNotFoundException(message);
             }
+            log.info("User with provided email found successfully");
             return user.get();
         } catch (UnsuccessfulOperationException ex) {
             transaction.rollback();

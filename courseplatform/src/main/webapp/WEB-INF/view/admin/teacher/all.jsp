@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <t:page title="CoursePlatform | Teachers">
-    <div class="container d-flex flex-column align-items-end">
+    <div class="d-flex flex-column align-items-end">
         <form action="${pageContext.request.contextPath}/admin-dashboard/teachers/new">
             <button type="submit" class="btn btn-primary">Create new teacher</button>
         </form>

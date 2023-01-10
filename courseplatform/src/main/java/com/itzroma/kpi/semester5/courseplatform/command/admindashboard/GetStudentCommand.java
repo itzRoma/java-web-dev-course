@@ -23,9 +23,10 @@ public class GetStudentCommand extends Command {
             StudentService service = new StudentServiceImpl();
             Student student = service.findByEmail(String.valueOf(request.getAttribute("email")));
             request.setAttribute("user", student);
+            return new View(JspPage.PROFILE, DispatchType.FORWARD);
         } catch (ServiceException ex) {
             request.setAttribute("error", ex.getMessage());
+            return View.notFound(request.getRequestURI(), DispatchType.FORWARD);
         }
-        return new View(JspPage.PROFILE, DispatchType.FORWARD);
     }
 }

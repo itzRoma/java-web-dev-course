@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <t:page title="CoursePlatform | Admin dashboard">
-    <div class="container text-center">
+    <div class="text-center">
         <div class="row mb-5">
             <div class="col me-5">
                 <table class="table table-sm table-hover caption-top">

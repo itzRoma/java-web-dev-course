@@ -11,7 +11,7 @@ import java.sql.SQLException;
 @AllArgsConstructor
 public abstract class CrudDaoImpl<ID, T extends Entity<ID>> extends AbstractDaoImpl<ID, T> implements CrudDao<ID, T> {
 
-    private static final String DELETE_QUERY = "DELETE FROM ? WHERE id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM %s WHERE id = ?";
 
     private String extractEntityTableName(T entity) {
         return entity.getClass().getSimpleName().replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
@@ -19,9 +19,12 @@ public abstract class CrudDaoImpl<ID, T extends Entity<ID>> extends AbstractDaoI
 
     @Override
     public void delete(T entity) throws UnsuccessfulOperationException {
-        try (PreparedStatement ps = connection.prepareStatement(DELETE_QUERY)) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                // I know about SQL injections, but it is the only way to use dynamic table name.
+                // Furthermore, this table name doesn't come from user. So it's "safe" to use.
+                DELETE_QUERY.formatted(extractEntityTableName(entity))
+        )) {
             int i = 0;
-            ps.setString(++i, extractEntityTableName(entity));
             ps.setObject(++i, entity.getId());
             ps.executeUpdate();
         } catch (SQLException ex) {

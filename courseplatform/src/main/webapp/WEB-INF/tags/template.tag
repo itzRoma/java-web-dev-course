@@ -7,11 +7,11 @@
 <head>
     <jsp:invoke fragment="head"/>
 </head>
-<body style="min-height: 100vh; display: flex; flex-direction: column;">
+<body class="min-vh-100 d-flex flex-column">
 <jsp:invoke fragment="header"/>
-<div style="margin: auto 0; padding: 3rem 0;">
+<main class="my-auto py-5 container">
     <jsp:doBody/>
-</div>
+</main>
 <jsp:invoke fragment="footer"/>
 </body>
 </html>
