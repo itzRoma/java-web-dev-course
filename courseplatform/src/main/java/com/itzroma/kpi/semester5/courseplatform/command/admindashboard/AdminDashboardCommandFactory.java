@@ -8,6 +8,7 @@ import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityNotFoundE
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +28,6 @@ public class AdminDashboardCommandFactory extends CommandFactory {
     public Command defineCommand() {
         if (action == null) return invalidCommand();
 
-        String action = this.action.endsWith("/") ? this.action.substring(0, this.action.length() - 1) : this.action;
         return switch (action) {
             case "" -> request.getMethod().equals("GET")
                     ? new GetAdminDashboardCommand(request, response)
@@ -49,40 +49,46 @@ public class AdminDashboardCommandFactory extends CommandFactory {
                     : new PostCourseCreationCommand(request, response);
             default -> {
                 if (action.matches(STUDENT_VIEW_REGEX)) {
-                    Matcher matcher = Pattern.compile(STUDENT_VIEW_REGEX).matcher(action);
-                    if (matcher.find()) {
-                        request.setAttribute("email", matcher.group(1));
-                    } else {
-                        throw new EntityNotFoundException("Student not found");
-                    }
-                    yield request.getMethod().equals("GET")
-                            ? new GetStudentCommand(request, response)
-                            : new InternalServerErrorCommand(request, response);
+                    yield viewStudent();
                 }
                 if (action.matches(STUDENT_TOGGLE_BLOCK_REGEX)) {
-                    Matcher matcher = Pattern.compile(STUDENT_TOGGLE_BLOCK_REGEX).matcher(action);
-                    if (matcher.find()) {
-                        request.setAttribute("email", matcher.group(1));
-                    } else {
-                        throw new EntityNotFoundException("Student not found");
-                    }
-                    yield request.getMethod().equals("GET")
-                            ? new NotFoundCommand(request, response)
-                            : new PostToggleBlockCommand(request, response);
+                    yield toggleBlockForStudent();
                 }
                 if (action.matches(TEACHER_VIEW_REGEX)) {
-                    Matcher matcher = Pattern.compile(TEACHER_VIEW_REGEX).matcher(action);
-                    if (matcher.find()) {
-                        request.setAttribute("email", matcher.group(1));
-                    } else {
-                        throw new EntityNotFoundException("Teacher not found");
-                    }
-                    yield request.getMethod().equals("GET")
-                            ? new GetTeacherCommand(request, response)
-                            : new InternalServerErrorCommand(request, response);
+                    yield viewTeacher();
                 }
                 yield invalidCommand();
             }
         };
+    }
+
+    private Command viewStudent() {
+        extractEmail(STUDENT_VIEW_REGEX, "Student not found");
+        return request.getMethod().equals("GET")
+                ? new GetStudentCommand(request, response)
+                : new InternalServerErrorCommand(request, response);
+    }
+
+    private void extractEmail(String regex, String notFoundMessage) {
+        Matcher matcher = Pattern.compile(regex).matcher(Objects.requireNonNull(action));
+        if (matcher.find()) {
+            request.setAttribute("email", matcher.group(1));
+        } else {
+            throw new EntityNotFoundException(notFoundMessage);
+        }
+    }
+
+    private Command toggleBlockForStudent() {
+        extractEmail(STUDENT_TOGGLE_BLOCK_REGEX, "Student not found");
+        return request.getMethod().equals("GET")
+                ? new NotFoundCommand(request, response)
+                : new PostToggleBlockCommand(request, response);
+    }
+
+    private Command viewTeacher() {
+        extractEmail(TEACHER_VIEW_REGEX, "Teacher not found");
+        return request.getMethod().equals("GET")
+                ? new GetTeacherCommand(request, response)
+                : new InternalServerErrorCommand(request, response);
     }
 }

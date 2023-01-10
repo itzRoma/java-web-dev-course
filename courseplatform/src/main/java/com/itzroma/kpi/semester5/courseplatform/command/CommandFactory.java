@@ -17,9 +17,15 @@ public abstract class CommandFactory {
     }
 
     private String extractAction(String actionExtractionRegex) {
-        Pattern pattern = Pattern.compile(request.getContextPath().concat(actionExtractionRegex));
-        Matcher matcher = pattern.matcher(request.getRequestURI());
-        return matcher.find() ? matcher.group() : null;
+        Matcher matcher = Pattern.compile(request.getContextPath().concat(actionExtractionRegex))
+                .matcher(request.getRequestURI());
+        if (matcher.find()) {
+            return matcher.group().endsWith("/")
+                    ? matcher.group().substring(0, matcher.group().length() - 1)
+                    : matcher.group();
+        } else {
+            return null;
+        }
     }
 
     public abstract Command defineCommand();

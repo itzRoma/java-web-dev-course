@@ -17,6 +17,7 @@
                 <th scope="col">Last name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Registration date</th>
+                <th scope="col">Actions</th>
             </tr>
             </thead>
             <tbody class="table-group-divider">
@@ -28,6 +29,12 @@
                     <td>${teacher.lastName}</td>
                     <td>${teacher.email}</td>
                     <td>${teacher.registrationDate}</td>
+                    <td>
+                        <a href="${pageContext.request.contextPath}/admin-dashboard/teachers/${teacher.email}"
+                           class="btn btn-link">
+                            View
+                        </a>
+                    </td>
                 </tr>
             </c:forEach>
             </tbody>

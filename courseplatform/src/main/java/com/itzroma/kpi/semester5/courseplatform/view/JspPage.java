@@ -33,7 +33,7 @@ public record JspPage(String jspPath, String url) {
             VIEW_DIR.concat("/admin/students.jsp"), CONTEXT_PATH.concat("/admin-dashboard/students")
     );
     public static final JspPage AD_TEACHERS = new JspPage(
-            VIEW_DIR.concat("/admin/teacher/teachers.jsp"), CONTEXT_PATH.concat("/admin-dashboard/teachers")
+            VIEW_DIR.concat("/admin/teacher/all.jsp"), CONTEXT_PATH.concat("/admin-dashboard/teachers")
     );
     public static final JspPage AD_TEACHERS_NEW = new JspPage(
             VIEW_DIR.concat("/admin/teacher/new.jsp"), CONTEXT_PATH.concat("/admin-dashboard/teachers/new")

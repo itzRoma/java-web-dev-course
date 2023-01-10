@@ -41,7 +41,7 @@ public class ProfileCommandFactory extends CommandFactory {
             return new InternalServerErrorCommand(request, response);
         }
 
-        return switch (action.endsWith("/") ? action.substring(0, action.length() - 1) : action) {
+        return switch (action) {
             case "" -> request.getMethod().equals("GET")
                     ? new GetProfileCommand(request, response)
                     : new InternalServerErrorCommand(request, response);

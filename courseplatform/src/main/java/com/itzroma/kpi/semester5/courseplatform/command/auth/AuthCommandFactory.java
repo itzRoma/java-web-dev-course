@@ -18,7 +18,7 @@ public class AuthCommandFactory extends CommandFactory {
     public Command defineCommand() {
         if (action == null) return invalidCommand();
 
-        return switch (action.endsWith("/") ? action.substring(0, action.length() - 1) : action) {
+        return switch (action) {
             case "sign-in" -> request.getMethod().equals("GET")
                     ? new GetSignInCommand(request, response)
                     : new PostSignInCommand(request, response);
