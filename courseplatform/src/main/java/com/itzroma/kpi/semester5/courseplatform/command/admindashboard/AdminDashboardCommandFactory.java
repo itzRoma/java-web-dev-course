@@ -25,6 +25,7 @@ public class AdminDashboardCommandFactory extends CommandFactory {
     private static final String TEACHER_VIEW_REGEX = "^/teachers/([\\w-.]+@\\w+(\\.\\w+)?)$";
 
     private static final String COURSE_VIEW_REGEX = "^/courses/(\\d+)$";
+    private static final String COURSE_UPDATE_REGEX = "^/courses/(\\d+)/update$";
     private static final String COURSE_DELETE_REGEX = "^/courses/(\\d+)/delete$";
 
     private static final String THEME_UPDATE_REGEX = "^/themes/([\\w%]+)/update$";
@@ -75,6 +76,9 @@ public class AdminDashboardCommandFactory extends CommandFactory {
                 }
                 if (action.matches(COURSE_VIEW_REGEX)) {
                     yield viewCourse();
+                }
+                if (action.matches(COURSE_UPDATE_REGEX)) {
+                    yield updateCourse();
                 }
                 if (action.matches(COURSE_DELETE_REGEX)) {
                     yield deleteCourse();
@@ -134,6 +138,13 @@ public class AdminDashboardCommandFactory extends CommandFactory {
         } else {
             throw new EntityNotFoundException("Course not found");
         }
+    }
+
+    private Command updateCourse() {
+        extractCourseId();
+        return request.getMethod().equals("GET")
+                ? new GetCourseUpdateCommand(request, response)
+                : new PostCourseUpdateCommand(request, response);
     }
 
     private Command deleteCourse() {

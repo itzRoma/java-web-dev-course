@@ -127,4 +127,23 @@ public class CourseServiceImpl implements CourseService {
             transaction.closeTransaction();
         }
     }
+
+    @Override
+    public Course updateByCourseId(Long targetId, Course source) throws ServiceException {
+        CourseDao dao = new CourseDaoImpl();
+        Transaction transaction = new Transaction();
+        transaction.openTransaction(dao);
+        try {
+            Course updated = dao.updateByCourseId(targetId, source);
+            transaction.commit();
+            log.info(() -> "Course with id %d updated successfully".formatted(targetId));
+            return updated;
+        } catch (UnsuccessfulOperationException ex) {
+            transaction.rollback();
+            log.severe(() -> "Cannot update course with id %d: %s".formatted(targetId, ex.getMessage()));
+            throw new ServiceException(ex);
+        } finally {
+            transaction.closeTransaction();
+        }
+    }
 }

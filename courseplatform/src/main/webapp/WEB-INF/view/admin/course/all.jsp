@@ -50,6 +50,10 @@
                            class="btn btn-link">
                             View
                         </a>
+                        <a href="${pageContext.request.contextPath}/admin-dashboard/courses/${course.id}/update"
+                           class="btn btn-link">
+                            Update
+                        </a>
                         <form action="${pageContext.request.contextPath}/admin-dashboard/courses/${course.id}/delete"
                               method="post">
                             <button type="submit" class="btn btn-link">X</button>

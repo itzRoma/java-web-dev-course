@@ -47,6 +47,9 @@ public record JspPage(String jspPath, String url) {
     public static final JspPage AD_COURSE = new JspPage(
             VIEW_DIR.concat("/admin/course/one.jsp"), CONTEXT_PATH.concat("/admin-dashboard/courses/%d")
     );
+    public static final JspPage AD_COURSE_UPDATE = new JspPage(
+            VIEW_DIR.concat("/admin/course/update.jsp"), CONTEXT_PATH.concat("/admin-dashboard/courses/%d/update")
+    );
 
     public static final JspPage AD_THEMES = new JspPage(
             VIEW_DIR.concat("/admin/theme/all.jsp"), CONTEXT_PATH.concat("/admin-dashboard/themes")
@@ -66,7 +69,7 @@ public record JspPage(String jspPath, String url) {
                 ADMIN_DASHBOARD,
                 AD_STUDENTS,
                 AD_TEACHERS, AD_TEACHERS_NEW,
-                AD_COURSES, AD_COURSES_NEW, AD_COURSE,
+                AD_COURSES, AD_COURSES_NEW, AD_COURSE, AD_COURSE_UPDATE,
                 AD_THEMES, AD_THEMES_NEW, AD_THEME_UPDATE
         );
     }

@@ -16,4 +16,6 @@ public interface CourseService {
     Course findById(Long id) throws EntityNotFoundException, ServiceException;
 
     void delete(Course course) throws ServiceException;
+
+    Course updateByCourseId(Long targetId, Course source) throws ServiceException;
 }

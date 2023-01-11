@@ -17,13 +17,18 @@ public class CourseDaoImpl extends CrudDaoImpl<Long, Course> implements CourseDa
     private static final String CREATE_COURSE_QUERY =
             "INSERT INTO course (title, description, duration, starting_date, status) VALUES (?, ?, ?, ?, ?)";
 
+    private static final String ASSIGN_THEMES = "INSERT INTO courses_themes (course_id, theme_id) VALUES (?, ?)";
+
     private static final String FIND_COURSE_BY_ID = "SELECT * FROM course WHERE id = ?";
 
     private static final String FIND_MANY_COURSES = "SELECT * FROM course ORDER BY id DESC LIMIT ?";
 
     private static final String FIND_ALL_COURSES = "SELECT * FROM course";
 
-    private static final String ASSIGN_THEMES = "INSERT INTO courses_themes (course_id, theme_id) VALUES (?, ?)";
+    private static final String UPDATE_COURSE_BY_COURSE_ID =
+            "UPDATE course SET title = ?, description = ?, duration = ?, starting_date = ? WHERE id = ?";
+
+    private static final String DELETE_COURSES_THEMES_BY_COURSE_ID = "DELETE FROM courses_themes WHERE course_id = ?";
 
     @Override
     public Course create(Course entity) throws UnsuccessfulOperationException {
@@ -52,6 +57,18 @@ public class CourseDaoImpl extends CrudDaoImpl<Long, Course> implements CourseDa
             throw new UnsuccessfulOperationException(ex);
         } finally {
             DBUtils.close(rs);
+        }
+    }
+
+    private void assignThemes(Long courseId, List<Theme> themes) throws SQLException {
+        try (PreparedStatement ps = connection.prepareStatement(ASSIGN_THEMES)) {
+            for (Theme theme : themes) {
+                int i = 0;
+                ps.setLong(++i, courseId);
+                ps.setLong(++i, theme.getId());
+                ps.addBatch();
+            }
+            ps.executeBatch();
         }
     }
 
@@ -135,15 +152,33 @@ public class CourseDaoImpl extends CrudDaoImpl<Long, Course> implements CourseDa
         return null;
     }
 
-    private void assignThemes(Long courseId, List<Theme> themes) throws UnsuccessfulOperationException {
-        try (PreparedStatement ps = connection.prepareStatement(ASSIGN_THEMES)) {
-            for (Theme theme : themes) {
-                int i = 0;
-                ps.setLong(++i, courseId);
-                ps.setLong(++i, theme.getId());
-                ps.addBatch();
+    @Override
+    public Course updateByCourseId(Long targetId, Course source) throws UnsuccessfulOperationException {
+        try (PreparedStatement ps = connection.prepareStatement(UPDATE_COURSE_BY_COURSE_ID)) {
+            int i = 0;
+            ps.setString(++i, source.getTitle());
+            ps.setString(++i, source.getDescription());
+            ps.setInt(++i, source.getDuration());
+            ps.setTimestamp(++i, Timestamp.valueOf(source.getStartingDate()));
+            ps.setLong(++i, targetId);
+
+            SQLException exception = new SQLException("Cannot update course with id %d".formatted(targetId));
+            if (ps.executeUpdate() == 0) {
+                throw exception;
             }
-            ps.executeBatch();
+            reassignThemes(targetId, source.getThemes());
+            return findById(targetId).orElseThrow(() -> exception);
+        } catch (SQLException ex) {
+            throw new UnsuccessfulOperationException(ex);
+        }
+    }
+
+    private void reassignThemes(long courseId, List<Theme> themes) {
+        try (PreparedStatement ps = connection.prepareStatement(DELETE_COURSES_THEMES_BY_COURSE_ID)) {
+            int i = 0;
+            ps.setObject(++i, courseId);
+            ps.executeUpdate();
+            assignThemes(courseId, themes);
         } catch (SQLException ex) {
             throw new UnsuccessfulOperationException(ex);
         }
