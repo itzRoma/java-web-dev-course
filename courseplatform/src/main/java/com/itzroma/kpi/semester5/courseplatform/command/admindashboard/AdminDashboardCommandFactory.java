@@ -3,33 +3,17 @@ package com.itzroma.kpi.semester5.courseplatform.command.admindashboard;
 import com.itzroma.kpi.semester5.courseplatform.command.Command;
 import com.itzroma.kpi.semester5.courseplatform.command.CommandFactory;
 import com.itzroma.kpi.semester5.courseplatform.command.InternalServerErrorCommand;
-import com.itzroma.kpi.semester5.courseplatform.command.NotFoundCommand;
-import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityNotFoundException;
+import com.itzroma.kpi.semester5.courseplatform.command.admindashboard.course.ADCoursesCommandFactory;
+import com.itzroma.kpi.semester5.courseplatform.command.admindashboard.student.ADStudentsCommandFactory;
+import com.itzroma.kpi.semester5.courseplatform.command.admindashboard.teacher.ADTeachersCommandFactory;
+import com.itzroma.kpi.semester5.courseplatform.command.admindashboard.theme.ADThemesCommandFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class AdminDashboardCommandFactory extends CommandFactory {
-    private static final String ADMIN_DASHBOARD_COMMAND_REGEX = "(?<=/admin-dashboard).*(?=\\?)|(?<=/admin-dashboard).*(?=$)";
-
-    private static final String USER_EMAIL_EXTRACTION_REGEX = "/(students|teachers)/([\\w-.]+@\\w+(\\.\\w+)?)";
-    private static final String COURSE_ID_EXTRACTION_REGEX = "/courses/(\\d+)";
-    private static final String THEME_NAME_EXTRACTION_REGEX = "/themes/([\\w%]+)";
-
-    private static final String STUDENT_VIEW_REGEX = "^/students/([\\w-.]+@\\w+(\\.\\w+)?)$";
-    private static final String STUDENT_TOGGLE_BLOCK_REGEX = "^/students/([\\w-.]+@\\w+(\\.\\w+)?)/toggle-block$";
-
-    private static final String TEACHER_VIEW_REGEX = "^/teachers/([\\w-.]+@\\w+(\\.\\w+)?)$";
-
-    private static final String COURSE_VIEW_REGEX = "^/courses/(\\d+)$";
-    private static final String COURSE_UPDATE_REGEX = "^/courses/(\\d+)/update$";
-    private static final String COURSE_DELETE_REGEX = "^/courses/(\\d+)/delete$";
-
-    private static final String THEME_UPDATE_REGEX = "^/themes/([\\w%]+)/update$";
-    private static final String THEME_DELETE_REGEX = "^/themes/([\\w%]+)/delete$";
+    private static final String ADMIN_DASHBOARD_COMMAND_REGEX =
+            "(?<=/admin-dashboard).*(?=\\?)|(?<=/admin-dashboard).*(?=$)";
 
     public AdminDashboardCommandFactory(HttpServletRequest request, HttpServletResponse response) {
         super(ADMIN_DASHBOARD_COMMAND_REGEX, request, response);
@@ -39,141 +23,25 @@ public class AdminDashboardCommandFactory extends CommandFactory {
     public Command defineCommand() {
         if (action == null) return invalidCommand();
 
-        return switch (action) {
-            case "" -> request.getMethod().equals("GET")
+        if (action.equals("")) {
+            return request.getMethod().equals("GET")
                     ? new GetAdminDashboardCommand(request, response)
                     : new InternalServerErrorCommand(request, response);
-            case "/students" -> request.getMethod().equals("GET")
-                    ? new GetStudentsCommand(request, response)
-                    : new InternalServerErrorCommand(request, response);
-            case "/teachers" -> request.getMethod().equals("GET")
-                    ? new GetTeachersCommand(request, response)
-                    : new InternalServerErrorCommand(request, response);
-            case "/teachers/new" -> request.getMethod().equals("GET")
-                    ? new GetTeacherCreationCommand(request, response)
-                    : new PostTeacherCreationCommand(request, response);
-            case "/courses" -> request.getMethod().equals("GET")
-                    ? new GetCoursesCommand(request, response)
-                    : new InternalServerErrorCommand(request, response);
-            case "/courses/new" -> request.getMethod().equals("GET")
-                    ? new GetCourseCreationCommand(request, response)
-                    : new PostCourseCreationCommand(request, response);
-            case "/themes" -> request.getMethod().equals("GET")
-                    ? new GetThemesCommand(request, response)
-                    : new InternalServerErrorCommand(request, response);
-            case "/themes/new" -> request.getMethod().equals("GET")
-                    ? new GetThemeCreationCommand(request, response)
-                    : new PostThemeCreationCommand(request, response);
-            default -> {
-                if (action.matches(STUDENT_VIEW_REGEX)) {
-                    yield viewStudent();
-                }
-                if (action.matches(STUDENT_TOGGLE_BLOCK_REGEX)) {
-                    yield toggleBlockForStudent();
-                }
-                if (action.matches(TEACHER_VIEW_REGEX)) {
-                    yield viewTeacher();
-                }
-                if (action.matches(COURSE_VIEW_REGEX)) {
-                    yield viewCourse();
-                }
-                if (action.matches(COURSE_UPDATE_REGEX)) {
-                    yield updateCourse();
-                }
-                if (action.matches(COURSE_DELETE_REGEX)) {
-                    yield deleteCourse();
-                }
-                if (action.matches(THEME_UPDATE_REGEX)) {
-                    yield updateTheme();
-                }
-                if (action.matches(THEME_DELETE_REGEX)) {
-                    yield deleteTheme();
-                }
-                yield invalidCommand();
-            }
-        };
-    }
-
-    private Command viewStudent() {
-        extractEmail("Student not found");
-        return request.getMethod().equals("GET")
-                ? new GetStudentCommand(request, response)
-                : new InternalServerErrorCommand(request, response);
-    }
-
-    private void extractEmail(String notFoundMessage) {
-        Matcher matcher = Pattern.compile(USER_EMAIL_EXTRACTION_REGEX).matcher(Objects.requireNonNull(action));
-        if (matcher.find()) {
-            request.setAttribute("email", matcher.group(2));
-        } else {
-            throw new EntityNotFoundException(notFoundMessage);
         }
-    }
 
-    private Command toggleBlockForStudent() {
-        extractEmail("Student not found");
-        return request.getMethod().equals("GET")
-                ? new NotFoundCommand(request, response)
-                : new PostToggleBlockCommand(request, response);
-    }
-
-    private Command viewTeacher() {
-        extractEmail("Teacher not found");
-        return request.getMethod().equals("GET")
-                ? new GetTeacherCommand(request, response)
-                : new InternalServerErrorCommand(request, response);
-    }
-
-    private Command viewCourse() {
-        extractCourseId();
-        return request.getMethod().equals("GET")
-                ? new GetCourseCommand(request, response)
-                : new InternalServerErrorCommand(request, response);
-    }
-
-    private void extractCourseId() {
-        Matcher matcher = Pattern.compile(COURSE_ID_EXTRACTION_REGEX).matcher(Objects.requireNonNull(action));
-        if (matcher.find()) {
-            request.setAttribute("id", Long.parseLong(matcher.group(1)));
-        } else {
-            throw new EntityNotFoundException("Course not found");
+        if (action.startsWith("/students")) {
+            return new ADStudentsCommandFactory(request, response).defineCommand();
         }
-    }
-
-    private Command updateCourse() {
-        extractCourseId();
-        return request.getMethod().equals("GET")
-                ? new GetCourseUpdateCommand(request, response)
-                : new PostCourseUpdateCommand(request, response);
-    }
-
-    private Command deleteCourse() {
-        extractCourseId();
-        return request.getMethod().equals("GET")
-                ? new NotFoundCommand(request, response)
-                : new PostCourseDeleteCommand(request, response);
-    }
-
-    private Command updateTheme() {
-        extractThemeName();
-        return request.getMethod().equals("GET")
-                ? new GetThemeUpdatingCommand(request, response)
-                : new PostThemeUpdatingCommand(request, response);
-    }
-
-    private void extractThemeName() {
-        Matcher matcher = Pattern.compile(THEME_NAME_EXTRACTION_REGEX).matcher(Objects.requireNonNull(action));
-        if (matcher.find()) {
-            request.setAttribute("name", matcher.group(1));
-        } else {
-            throw new EntityNotFoundException("Theme not found");
+        if (action.startsWith("/teachers")) {
+            return new ADTeachersCommandFactory(request, response).defineCommand();
         }
-    }
+        if (action.startsWith("/themes")) {
+            return new ADThemesCommandFactory(request, response).defineCommand();
+        }
+        if (action.startsWith("/courses")) {
+            return new ADCoursesCommandFactory(request, response).defineCommand();
+        }
 
-    private Command deleteTheme() {
-        extractThemeName();
-        return request.getMethod().equals("GET")
-                ? new NotFoundCommand(request, response)
-                : new PostThemeDeleteCommand(request, response);
+        return invalidCommand();
     }
 }

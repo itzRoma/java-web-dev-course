@@ -1,4 +1,4 @@
-package com.itzroma.kpi.semester5.courseplatform.command.admindashboard;
+package com.itzroma.kpi.semester5.courseplatform.command.admindashboard.course;
 
 import com.itzroma.kpi.semester5.courseplatform.command.Command;
 import com.itzroma.kpi.semester5.courseplatform.exception.entity.EntityNotFoundException;
@@ -13,8 +13,8 @@ import com.itzroma.kpi.semester5.courseplatform.view.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class GetCourseCommand extends Command {
-    public GetCourseCommand(HttpServletRequest request, HttpServletResponse response) {
+public class GetOneCourseCommand extends Command {
+    public GetOneCourseCommand(HttpServletRequest request, HttpServletResponse response) {
         super(request, response);
     }
 

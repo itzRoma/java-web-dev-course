@@ -63,6 +63,30 @@
             </div>
         </div>
         <div class="row mb-5">
+            <div class="col">
+                <table class="table table-sm table-hover caption-top align-middle">
+                    <caption>
+                        Recently created themes,
+                        <a href="${pageContext.request.contextPath}/admin-dashboard/themes"> show all</a>
+                    </caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">Theme ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">In use by</th>
+                    </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                    <c:forEach items="${requestScope.themes}" var="theme">
+                        <tr>
+                            <th scope="row">${theme.id}</th>
+                            <td>${theme.name}</td>
+                            <td>${theme.numberOfUses} course(s)</td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
             <div class="col me-5">
                 <table class="table table-sm table-hover caption-top">
                     <caption>
@@ -84,30 +108,6 @@
                             <td>${course.title.length() > 20 ? course.title.substring(0, 20).concat("...") : course.title}</td>
                             <td>${course.startingDate}</td>
                             <td>${course.status}</td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col">
-                <table class="table table-sm table-hover caption-top align-middle">
-                    <caption>
-                        Recently created themes,
-                        <a href="${pageContext.request.contextPath}/admin-dashboard/themes"> show all</a>
-                    </caption>
-                    <thead>
-                    <tr>
-                        <th scope="col">Theme ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">In use by</th>
-                    </tr>
-                    </thead>
-                    <tbody class="table-group-divider">
-                    <c:forEach items="${requestScope.themes}" var="theme">
-                        <tr>
-                            <th scope="row">${theme.id}</th>
-                            <td>${theme.name}</td>
-                            <td>${theme.numberOfUses} course(s)</td>
                         </tr>
                     </c:forEach>
                     </tbody>

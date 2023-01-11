@@ -1,9 +1,9 @@
-package com.itzroma.kpi.semester5.courseplatform.command.admindashboard;
+package com.itzroma.kpi.semester5.courseplatform.command.admindashboard.course;
 
 import com.itzroma.kpi.semester5.courseplatform.command.Command;
 import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceException;
-import com.itzroma.kpi.semester5.courseplatform.service.StudentService;
-import com.itzroma.kpi.semester5.courseplatform.service.impl.StudentServiceImpl;
+import com.itzroma.kpi.semester5.courseplatform.service.CourseService;
+import com.itzroma.kpi.semester5.courseplatform.service.impl.CourseServiceImpl;
 import com.itzroma.kpi.semester5.courseplatform.view.DispatchType;
 import com.itzroma.kpi.semester5.courseplatform.view.JspPage;
 import com.itzroma.kpi.semester5.courseplatform.view.View;
@@ -11,19 +11,19 @@ import com.itzroma.kpi.semester5.courseplatform.view.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class GetStudentsCommand extends Command {
-    public GetStudentsCommand(HttpServletRequest request, HttpServletResponse response) {
+public class GetAllCoursesCommand extends Command {
+    public GetAllCoursesCommand(HttpServletRequest request, HttpServletResponse response) {
         super(request, response);
     }
 
     @Override
     public View execute() {
         try {
-            StudentService service = new StudentServiceImpl();
-            request.setAttribute("students", service.findAll());
+            CourseService service = new CourseServiceImpl();
+            request.setAttribute("courses", service.findAll());
         } catch (ServiceException ex) {
             request.setAttribute("error", ex.getMessage());
         }
-        return new View(JspPage.AD_STUDENTS, DispatchType.FORWARD);
+        return new View(JspPage.AD_COURSES, DispatchType.FORWARD);
     }
 }

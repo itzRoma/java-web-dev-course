@@ -35,4 +35,14 @@ public abstract class CommandFactory {
                 ? new NotFoundCommand(request, response)
                 : new InternalServerErrorCommand(request, response);
     }
+
+    protected Command instantiateCommand(Class<? extends Command> commandClass) {
+        try {
+            return commandClass
+                    .getConstructor(HttpServletRequest.class, HttpServletResponse.class)
+                    .newInstance(request, response);
+        } catch (ReflectiveOperationException ex) {
+            return new InternalServerErrorCommand(request, response);
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package com.itzroma.kpi.semester5.courseplatform.command.admindashboard;
+package com.itzroma.kpi.semester5.courseplatform.command.admindashboard.student;
 
 import com.itzroma.kpi.semester5.courseplatform.command.Command;
 import com.itzroma.kpi.semester5.courseplatform.exception.service.ServiceException;
@@ -12,8 +12,8 @@ import com.itzroma.kpi.semester5.courseplatform.view.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class PostToggleBlockCommand extends Command {
-    public PostToggleBlockCommand(HttpServletRequest request, HttpServletResponse response) {
+public class PostToggleBlockForStudentCommand extends Command {
+    public PostToggleBlockForStudentCommand(HttpServletRequest request, HttpServletResponse response) {
         super(request, response);
     }
 

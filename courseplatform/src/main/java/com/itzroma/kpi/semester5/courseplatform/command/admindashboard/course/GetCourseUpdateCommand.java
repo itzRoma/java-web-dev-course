@@ -1,4 +1,4 @@
-package com.itzroma.kpi.semester5.courseplatform.command.admindashboard;
+package com.itzroma.kpi.semester5.courseplatform.command.admindashboard.course;
 
 import com.itzroma.kpi.semester5.courseplatform.command.Command;
 import com.itzroma.kpi.semester5.courseplatform.service.impl.CourseServiceImpl;
