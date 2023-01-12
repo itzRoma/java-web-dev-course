@@ -21,6 +21,10 @@ public class ADCoursesCommandFactory extends CommandFactory {
     private static final String COURSE_UPDATE_REGEX = "^/(\\d+)/update$";
     private static final String COURSE_DELETE_REGEX = "^/(\\d+)/delete$";
 
+    private static final String COURSE_UNIT_NEW_REGEX = "^/(\\d+)/units/new$";
+    private static final String COURSE_UNIT_UPDATE_REGEX = "^/(\\d+)/units/([\\w%]+)/update";
+    private static final String COURSE_UNIT_DELETE_REGEX = "^/(\\d+)/units/([\\w%]+)/delete$";
+
     public ADCoursesCommandFactory(HttpServletRequest request, HttpServletResponse response) {
         super(AD_COURSES_COMMAND_REGEX, request, response);
     }
@@ -43,6 +47,16 @@ public class ADCoursesCommandFactory extends CommandFactory {
         }
         if (action.matches(COURSE_DELETE_REGEX)) {
             return defineCommand(true, NotFoundCommand.class, PostCourseDeleteCommand.class);
+        }
+
+        if (action.matches(COURSE_UNIT_NEW_REGEX)) {
+            return defineCommand(true, NotFoundCommand.class, PostCourseUnitCreateCommand.class);
+        }
+        if (action.matches(COURSE_UNIT_UPDATE_REGEX)) {
+            return defineCommand(true, NotFoundCommand.class, PostCourseUnitUpdateCommand.class);
+        }
+        if (action.matches(COURSE_UNIT_DELETE_REGEX)) {
+            return defineCommand(true, NotFoundCommand.class, PostCourseUnitDeleteCommand.class);
         }
 
         return invalidCommand();

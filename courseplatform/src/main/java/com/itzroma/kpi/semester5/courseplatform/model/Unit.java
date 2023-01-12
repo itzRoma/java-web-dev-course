@@ -15,4 +15,9 @@ public class Unit implements Entity<Long> {
     private String title;
     private Long courseId;
     private Set<Module> modules;
+
+    public Unit(String title, Long courseId) {
+        this.title = title;
+        this.courseId = courseId;
+    }
 }

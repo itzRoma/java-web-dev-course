@@ -38,7 +38,7 @@
                     <td>${course.duration}</td>
                     <td>
                         <c:forEach items="${course.themes}" var="theme">
-                            <span class="badge rounded-pill text-bg-primary">${theme.name}</span>
+                            <span class="badge rounded-pill text-bg-primary mb-1">${theme.name}</span>
                         </c:forEach>
                     </td>
                     <td>${course.minGrade}</td>

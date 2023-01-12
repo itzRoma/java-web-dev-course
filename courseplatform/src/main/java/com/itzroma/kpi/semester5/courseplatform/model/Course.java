@@ -4,7 +4,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -22,7 +21,7 @@ public class Course implements Entity<Long> {
     private LocalDateTime startingDate;
     private CourseStatus status;
     private List<Theme> themes;
-    private Set<Unit> units;
+    private List<Unit> units;
 
     public Course(String title, String description, Integer duration, LocalDateTime startingDate, List<Theme> themes) {
         this.title = title;

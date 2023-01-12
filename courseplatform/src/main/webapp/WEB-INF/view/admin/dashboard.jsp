@@ -62,8 +62,8 @@
                 </table>
             </div>
         </div>
-        <div class="row mb-5">
-            <div class="col">
+        <div class="row">
+            <div class="col me-5">
                 <table class="table table-sm table-hover caption-top align-middle">
                     <caption>
                         Recently created themes,
@@ -87,7 +87,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col me-5">
+            <div class="col">
                 <table class="table table-sm table-hover caption-top">
                     <caption>
                         Recently created courses,
